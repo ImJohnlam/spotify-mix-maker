@@ -32,6 +32,9 @@ app.use(express.static(__dirname + '/public'));
 app.use(bodyParser());
 app.use(cookieParser());
 
+if (process.env.NODE_ENV === 'production')
+	app.use(express.static('client/build'));
+
 // app.use(cors());
 app.use(function(req, res, next) {
    console.log("Handling " + req.path + '/' + req.method);
