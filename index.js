@@ -12,8 +12,10 @@ const app = express();
 
 const creds = require('./creds.json');
 
-const port = (process.argv.indexOf("-p") === -1) ? 3000 :
- parseInt(process.argv[process.argv.indexOf("-p") + 1]);
+//const port = (process.argv.indexOf("-p") === -1) ? 3000 :
+// parseInt(process.argv[process.argv.indexOf("-p") + 1]);
+
+const PORT = process.env.PORT || 3000
 
 const appPORT = 3001;
 
@@ -292,6 +294,6 @@ app.get('/recommend', (req, res) => {
    res.end()
 })
 
-app.listen(port, () => {
-   console.log(`listening on port ${port}`);
+app.listen(PORT, () => {
+   console.log(`listening on port ${PORT}`);
 });
