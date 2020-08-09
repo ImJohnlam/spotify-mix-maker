@@ -8,6 +8,7 @@
     "build": "cd reactjs && npm run build",
     "install-client": "cd reactjs && npm install",
     "heroku-postbuild": "npm run install-client && npm run build",
+    "reactjs": "cd reactjs && npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
