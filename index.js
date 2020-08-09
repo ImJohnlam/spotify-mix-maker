@@ -28,7 +28,7 @@ const apiURL = ''
 const authReqConf = {}
 const authURL = ''
 
-app.use(express.static(__dirname + '/public'));
+//app.use(express.static(__dirname + '/public'));
 app.use(bodyParser());
 app.use(cookieParser());
 
