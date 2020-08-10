@@ -3,7 +3,7 @@ import {Form, FormGroup, FormControl, Row, Button} from 'react-bootstrap';
 import queryString from 'query-string';
 import Cookies from 'js-cookie'
 
-export default function LoginBar(props) {
+export default function Navigator(props) {
    const [user, setUser] = useState("");
 
 

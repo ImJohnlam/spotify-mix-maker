@@ -1,8 +1,10 @@
-import React, {useEffect, useState, Component} from 'react';
-import {Form, FormGroup, FormControl, Row, Col, Button} from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import {Form, FormGroup, FormControl, Row, Col, Button, Card} from 'react-bootstrap';
+import {Route, Redirect, Switch } from 'react-router-dom';
+import {LinkContainer} from 'react-router-bootstrap';
 import './App.css';
-import LoginBar from './LoginBar'
-import Recommender from './Recommender'
+import Navigator from '../Navigator/Navigator'
+import { Home, Recommender, Details }  from '../components'
 import queryString from 'query-string';
 import Cookies from 'js-cookie'
 
@@ -65,24 +67,25 @@ function App(props) {
       })
    }
 
-   let getTop = () => {
-      fetch('http://localhost:3000/top')
-      .then(res => res.json())
-      .then(data => {
-         console.log('top')
-      })
-      .catch()
-   }
    return (
       <div>
          <p>document.cookie={document.cookie}</p>
          <p>time remaining={(parseInt(Cookies.get('expiry_date')) - Date.now()) / 1000}</p>
          { creds.searchArtists ? <iframe src="https://open.spotify.com/embed/track/0MiZuvQDXtd9lGAxZa8Syi" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe> : "" }
-         <p>player</p>
-         <Button onClick={() => window.history.replaceState({}, document.title, '/test')}>test button</Button>
+         <Navigator/>
+         <Switch>
+            <Route exact path='/' 
+             render={() => <Home/>}/>
+            <Route path='/details'
+             render={() => <Details/>}/>
+            <Route path='/recommender'
+             render={() => <Recommender/>}/>
+         </Switch>
+
+         <h1>END PAGE</h1>
+         {/* <Button onClick={() => window.history.replaceState({}, document.title, '/test')}>test button</Button>
          <Button onClick={() => window.location.reload()}>refresh page</Button>
-         <LoginBar></LoginBar>
-         <div>p</div>
+         <Navigator></Navigator>
          <Form>
             <FormGroup controlId="search">
                <FormControl placeholder="search spotify" name="search" onChange={handleChange}/>
@@ -94,8 +97,7 @@ function App(props) {
          <h2>search results {items.length ? `for: ${creds.search}` : ""}</h2>
          <div>{items}</div>
          <Recommender></Recommender>
-         <Button onClick={getTop}>top playlists</Button>
-
+         <Button onClick={getTop}>top playlists</Button> */}
       </div>
    );
 }

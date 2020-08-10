@@ -12,14 +12,11 @@ const app = express();
 
 const creds = require('./creds.json');
 
-//const port = (process.argv.indexOf("-p") === -1) ? 3000 :
-// parseInt(process.argv[process.argv.indexOf("-p") + 1]);
-
 const PORT = process.env.PORT || 3000
 
-const appPORT = 3001;
+const clientURL = process.env.clientURL || 'http://localhost:3001';
 
-const redirectURI = 'http://localhost:3000/callback';
+const redirectURI = process.env.redirectURI || 'http://localhost:3000/callback';
 const stateKey = 'spotify_auth_state';
 
 const apiReqConf = {}
@@ -28,7 +25,7 @@ const apiURL = ''
 const authReqConf = {}
 const authURL = ''
 
-//app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/public'));
 app.use(bodyParser());
 app.use(cookieParser());
 
@@ -38,7 +35,7 @@ if (process.env.NODE_ENV === 'production')
 // app.use(cors());
 app.use(function(req, res, next) {
    console.log("Handling " + req.path + '/' + req.method);
-   res.header("Access-Control-Allow-Origin", "http://localhost:" + appPORT);
+   res.header("Access-Control-Allow-Origin", clientURL);
    res.header("Access-Control-Allow-Credentials", true);
    res.header("Access-Control-Allow-Headers", "Content-Type");
    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
@@ -275,7 +272,7 @@ app.get('/top', (req, res) => {
       playlistTracks.forEach(pt => {
          console.log(JSON.stringify(pt.track, null, 2))
       })
-      res.send(options)
+      res.send(playlistTracks.map(pt => pt.track))
    })
 })
 
