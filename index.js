@@ -25,12 +25,14 @@ const apiURL = ''
 const authReqConf = {}
 const authURL = ''
 
-app.use(express.static(__dirname + '/public'));
+
 app.use(bodyParser());
 app.use(cookieParser());
 
 if (process.env.NODE_ENV === 'production')
-	app.use(express.static('client/build'));
+   app.use(express.static('client/build'));
+else
+   app.use(express.static(__dirname + '/public'));
 
 // app.use(cors());
 app.use(function(req, res, next) {
