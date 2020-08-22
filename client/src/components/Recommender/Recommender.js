@@ -1,28 +1,20 @@
-import React, {useEffect, useState, Component} from 'react';
-import {Form, FormGroup, FormControl, Row, Col, Button} from 'react-bootstrap';
+import React, {useEffect, useState, Component, useContext} from 'react';
+import {Form, FormGroup, FormControl, Row, Col, Button, Card} from 'react-bootstrap';
 import queryString from 'query-string';
-
-const AttributeSetting = props => {
-
-}
+import {FilterBar} from '../components'
+import { RecommenderContext, RecommenderContextProvider } from '../contexts'
 
 export default function Recommender(props) {
-   const [recs, setRecs] = useState([]);
-
-   let seeds = {
-      seed_artists: [],
-      seed_genres: [],
-      seed_tracks: []
-   };
-   let filters = {};
-
-   let submit = () => {
-      fetch()
-   }
 
    return (
-      <div>
+      <section className='container'>
          <h1>--Recommender--</h1>
-      </div>
+         
+         <RecommenderContextProvider>
+            <Button onClick={() => console.log(0)}>test button</Button>
+            <FilterBar/>
+         </RecommenderContextProvider>
+         
+      </section>
    )
 }

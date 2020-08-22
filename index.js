@@ -71,41 +71,10 @@ app.use((req, res, next) => {
    next()
 })
 
-// all in one handler
-/*
-app.get('/search', (req, res) => {
-   const authOptions = {
-      url: 'https://accounts.spotify.com/api/token',
-      form: {
-         grant_type: 'client_credentials'
-      },
-      headers: {
-         Authorization: 'Basic ' + (new Buffer(creds.client_id + ':' + creds.client_secret).toString('base64'))
-      }
-   };
-
-   request.post(authOptions, (tokErr, tokRes, tokBody) => {
-      let authObj = JSON.parse(tokBody);
-      let accessToken = authObj.access_token;
-      console.log(`1 accessing api, accessToken=${accessToken}`);
-      let options = {
-         url: 'https://api.spotify.com/v1/search?q=mac%20miller&type=artist',
-         headers: { Authorization: 'Bearer ' + accessToken },
-         json: true
-      };
-      request.get(options, (sErr, sRes, sBody) => {
-         console.log(JSON.stringify(sBody, null, 2))
-         sBody.artists.items.forEach((item) => console.log(item.name))
-         res.send(sBody)
-      })
-   })
-})
-*/
-
-//also use this for recommend
-// get client credentials and attach to req body
+// TO DO: save client credentials to reuse
+// get client credentials
 app.use((req, res, next) => {
-   if (req.path === '/search' || req.path === '/top') {
+   if (req.path === '/search' || req.path === '/top' || '/details') {
       const authOptions = {
          url: 'https://accounts.spotify.com/api/token',
          form: {
@@ -129,17 +98,20 @@ app.use((req, res, next) => {
       next();
 });
 
-// 
+// if query param 'detailed' is true, also return song features
 app.get('/search', (req, res) => {
    let options = {
-      url: 'https://api.spotify.com/v1/search' + url.parse(req.url,true).search,
+      url: 'https://api.spotify.com/v1/search' + url.parse(req.url, true).search,
       headers: { Authorization: 'Bearer ' + req.accessToken },
       json: true
    };
+
    request.get(options, (sErr, sRes, sBody) => {
       console.log(JSON.stringify(sBody, null, 2))
-      sBody.artists.items.forEach((item) => console.log(item.name))
-      res.json(sBody)
+      let results = sBody[`${req.query.type}s`].items;
+
+      results.forEach((item) => console.log(item.name))
+      res.json(results)
       console.log(req.query)
    })
 })
@@ -259,7 +231,7 @@ app.get('/me', (req, res) => {
 app.get('/top', (req, res) => {
    const playlistID = '37i9dQZEVXbLRQDuF5jeBp';
    let query = querystring.stringify({
-      fields: 'items(track(name, artists(name)))'
+      fields: 'items(track(name, external_urls, id, artists(name), album(images)))'
    })
 
    let options = {
@@ -276,6 +248,46 @@ app.get('/top', (req, res) => {
       })
       res.send(playlistTracks.map(pt => pt.track))
    })
+})
+
+function addDetails(track) {
+   const keys = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
+   const camelotNum = ((7 * track.key) + 5 + (track.mode ? 3 : 0)) % 12 || 12;
+   const minutes = Math.round(track.duration_ms / 60000);
+   const seconds = Math.round(track.duration_ms / 1000) % 60;
+   const ratings = ['acousticness', 'danceability', 'energy', 'instrumentalness', 'liveness', 'speechiness', 'valence']
+
+   track.classical = keys[track.key] + (track.mode ? ' Major' : ' Minor');
+   track.camelot = camelotNum.toString(10) + (track.mode ? 'B' : 'A')
+   track.duration_min = minutes.toString(10) + ':' + (seconds < 10 ? '0' : '') + seconds.toString(10);
+   track.bpm = Math.round(track.tempo);
+   track.loudness = Math.round(track.loudness).toString(10) + ' dB'
+   ratings.forEach(attr => track[attr] = Math.round(parseFloat(track[attr]) * 100))
+}
+
+app.get('/details/:id', (req, res) => {
+   const id = req.params.id;
+   let trackOptions = {
+      url: `https://api.spotify.com/v1/tracks/${id}`,
+      headers: { Authorization: 'Bearer ' + req.accessToken },
+      json: true
+   }
+
+   request.get(trackOptions, (tErr, tRes, tBody) => {
+      let featuresOptions = {
+         url: `https://api.spotify.com/v1/audio-features/${id}`,
+         headers: { Authorization: 'Bearer ' + req.accessToken },
+         json: true  
+      }
+
+      request.get(featuresOptions, (fErr, fRes, fBody) => {
+         let detailedTrack = {...tBody, ...fBody};
+         addDetails(detailedTrack)
+         console.log(`detailedTrack=${JSON.stringify(detailedTrack, null, 2)}`)
+         res.send({...detailedTrack});
+      })
+   })
+
 })
 
 app.get('/recommend', (req, res) => {

@@ -1,5 +1,6 @@
 import React, {useEffect, useState, Component} from 'react';
-import {Form, FormGroup, FormControl, Row, Button} from 'react-bootstrap';
+import {Navbar, Button, Nav} from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap';
 import queryString from 'query-string';
 import Cookies from 'js-cookie'
 
@@ -38,11 +39,23 @@ export default function Navigator(props) {
    // if can't log in, show login button
 
    return (
-      <div>
-         <Button onClick={() => window.location.assign('http://localhost:3000/login')}>login to access playlists</Button>
-         <Button onClick={() => window.location.assign('http://localhost:3000/refresh?' + queryString.stringify({refresh_token: Cookies.get('refresh_token')}))}>refresh token</Button>
+      <Navbar>
+         <Navbar.Brand href='/'>HOME</Navbar.Brand>
+         <Navbar.Toggle/>
+         <Navbar.Collapse>
+            <Nav>
+               <LinkContainer to='/details'>
+                  <Nav.Link>DETAILS</Nav.Link>
+               </LinkContainer>
+               <LinkContainer to='/recommender'>
+                  <Nav.Link>RECOMMENDER</Nav.Link>
+               </LinkContainer>
+            </Nav>
+         </Navbar.Collapse>
+         {/* <Button onClick={() => window.location.assign('http://localhost:3000/login')}>login to access playlists</Button>
+         <Button onClick={() => window.location.assign('http://localhost:3000/refresh?' + queryString.stringify({refresh_token: Cookies.get('refresh_token')}))}>refresh token</Button> */}
          {/* <Button onClick={() => fetch('http://localhost:3000/login').then(res => console.log(`test button res=${res}`))}>test</Button> */}
          {user && <p>logged in as {user}</p>}
-      </div>
+      </Navbar>
    )
 }
