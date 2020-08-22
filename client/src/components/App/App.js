@@ -10,6 +10,7 @@ import queryString from 'query-string';
 import Cookies from 'js-cookie'
 
 function App(props) {
+   console.log(process.ENV)
    // const [items, setItems] = useState([])
    // const [creds, setCreds] = useState({
    //    search: "",
