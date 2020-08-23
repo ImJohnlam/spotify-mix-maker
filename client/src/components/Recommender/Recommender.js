@@ -13,6 +13,14 @@ export default function Recommender(props) {
          <RecommenderContextProvider>
             <Button onClick={() => console.log(0)}>test button</Button>
             <FilterBar/>
+            <Row>
+               <Col>
+                  <b>seeder here</b>
+               </Col>
+               <Col>
+                  <b>results here</b>
+               </Col>
+            </Row>
          </RecommenderContextProvider>
          
       </section>

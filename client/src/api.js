@@ -1,4 +1,4 @@
-const baseURL = "http://localhost:3000/";
+const baseURL = process.env.API_URL || "http://localhost:3000/";
 const headers = new Headers();
 
 headers.set('Content-Type', 'application/JSON');
