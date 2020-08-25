@@ -8,6 +8,7 @@ export default props => {
    let history = useHistory();
    let track = props.track;
 
+   // TODO: change buttons to <a>
    return (
       <Card>
          <img src={track.album.images[0].url} width='200' height='200'/>
@@ -15,7 +16,7 @@ export default props => {
             {track.name} by: {track.artists.map(artist => artist.name).join(', ')} id={track.id}
          </Card.Body>
          <Button onClick={() => setId(track.id)}>Play</Button>
-         <Button onClick={() => history.push(`/details/${track.id}`)}>Details</Button>
+         <Button onClick={() => {history.push(`/details/${track.id}`); window.scrollTo(0, 0)}}>Details</Button>
          <Button onClick={() => window.open(track.external_urls.spotify)}>Spotify</Button>
       </Card>
    )

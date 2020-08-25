@@ -98,7 +98,7 @@ app.use((req, res, next) => {
       next();
 });
 
-// if query param 'detailed' is true, also return song features
+
 app.get('/search', (req, res) => {
    let options = {
       url: 'https://api.spotify.com/v1/search' + url.parse(req.url, true).search,

@@ -1,4 +1,7 @@
-const baseURL = process.env.API_URL || "http://localhost:3000/";
+//TODO change config vars later
+const baseURL = process.env.NODE_ENV === 'production' ?
+ 'https://test-app-jldt.herokuapp.com/' :
+ "http://localhost:3000/";
 const headers = new Headers();
 
 headers.set('Content-Type', 'application/JSON');
@@ -31,7 +34,7 @@ export function getTrack(id, cb) {
    .then(track => { if (cb) cb(track); })
 }
 
-export function searchTracks(query, cb) {
+export function search(query, cb) {
    return get(`search?${query}`)
    .then(res => res.json())
    .then(tracks => { if (cb) cb(tracks); })

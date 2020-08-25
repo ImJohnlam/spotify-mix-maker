@@ -1,7 +1,7 @@
 import React, {useEffect, useState, Component, useContext} from 'react';
 import {Form, FormGroup, FormControl, Row, Col, Button, Card} from 'react-bootstrap';
 import queryString from 'query-string';
-import {FilterBar} from '../components'
+import {FilterBar, Seeder, RecResults} from '../components'
 import { RecommenderContext, RecommenderContextProvider } from '../contexts'
 
 export default function Recommender(props) {
@@ -15,10 +15,10 @@ export default function Recommender(props) {
             <FilterBar/>
             <Row>
                <Col>
-                  <b>seeder here</b>
+                  <Seeder/>
                </Col>
                <Col>
-                  <b>results here</b>
+                  <RecResults/>
                </Col>
             </Row>
          </RecommenderContextProvider>

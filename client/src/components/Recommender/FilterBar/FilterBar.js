@@ -28,77 +28,115 @@ const AttributeSetting = props => {
    let controls;
 
    const [localFilters, setLocalFilters] = useState({})
-   const [checked, setChecked] = useState(false)
-   const [recSettings, setRecSettings] = useContext(RecommenderContext);
+   const [borderState, setBorderState] = useState(false)
+   const [seeds, setSeeds, filters, setFilters] = useContext(RecommenderContext);
 
-   let handleCheck = ev => {
-      let newRecSettings = Object.assign({}, recSettings)
-      let newRecFilters;
-      if (ev.target.value === 'false')
-         newRecFilters = {...recSettings.filters, ...localFilters}
-      else {
-         newRecFilters = {...recSettings.filters}
-         delete newRecFilters[`target_${props.attr}`]
-         delete newRecFilters[`min_${props.attr}`]
-         delete newRecFilters[`max_${props.attr}`]
+   let applyFilters = ev => {
+      let newFilters;
+
+      if (!Object.keys(localFilters).length)
+         return;
+
+      if (props.attr === 'duration_ms') {
+         Object.keys(localFilters).forEach(filterName =>
+            localFilters[filterName] = localFilters[filterName].split(':').reduce((acc,time) => (60 * acc) + +time) * 1000
+         )
       }
 
-      console.log('checkbox')
-      console.log(`recSettings=${JSON.stringify(recSettings, null, 2)}`)
-      console.log(`localFilters=${JSON.stringify(localFilters, null, 2)}`)
-      console.log(`newRecFilters=${JSON.stringify(newRecFilters, null, 2)}`)
-      console.log(`newRecSettings=${JSON.stringify(newRecSettings, null, 2)}`)
-      setChecked(!checked)
-      setRecSettings({...newRecSettings, filters: {...newRecFilters}})
+      newFilters = {...filters, ...localFilters};
+      setFilters(newFilters);
+      setBorderState('success')
+   }
+
+   let resetFilters = ev => {
+      let newFilters = {...filters}
+      delete newFilters[`target_${props.attr}`]
+      delete newFilters[`min_${props.attr}`]
+      delete newFilters[`max_${props.attr}`]
+      
+      setLocalFilters({})
+      setFilters(newFilters)
+      setBorderState('')
    }
 
    let handleChange = ev => {
       let newFilters = {...localFilters}
       ev.preventDefault()
 
-      // convert to ms
-      if (props.attr === 'duration_ms')
-         console.log()
-
-      else {
-         newFilters[`${ev.target.placeholder}_${props.attr}`] = ev.target.value;
-         setLocalFilters(newFilters)
-      }
-         
+      newFilters[ev.target.name] = ev.target.value;
+      setLocalFilters(newFilters)
+      setBorderState('warning')
    }
 
-   //add check box to (de)activate
    if (props.attr === 'key')
-      controls = <Button>key</Button>
+      controls = (
+         <Row>
+            <Col>
+               <Form.Control name='target_key' as='select' onChange={handleChange} value={localFilters.target_key || ''}>
+                  <option value=''>Key</option>
+                  <option value='0'>C</option>
+                  <option value='1'>C#</option>
+                  <option value='2'>D</option>
+                  <option value='3'>D♯</option>
+                  <option value='4'>E</option>
+                  <option value='5'>F</option>
+                  <option value='6'>F♯</option>
+                  <option value='7'>G</option>
+                  <option value='8'>G♯</option>
+                  <option value='9'>A</option>
+                  <option value='10'>A♯</option>
+                  <option value='11'>B</option>
+               </Form.Control>
+            </Col>
+            <Col>
+               <Form.Control name='target_mode' as='select' onChange={handleChange} value={localFilters.target_mode || ''}>
+                  <option value=''>Tonality</option>
+                  <option value='0'>Minor</option>
+                  <option value='1'>Major</option>
+               </Form.Control>
+            </Col>
+            <Col>
+               <Button onClick={applyFilters}>apply</Button>
+               <Button onClick={resetFilters}>reset</Button>
+            </Col>
+         </Row>
+         
+
+      )
    else {
       controls = (
-         <Form>
-            <Row>
-               <Col>
-                  <Form.Control placeholder='target' onChange={handleChange}></Form.Control>
-               </Col>
-               <Col>
-                  <Form.Control placeholder='min' onChange={handleChange}></Form.Control>
-               </Col>
-               <Col>
-                  <Form.Control placeholder='max' onChange={handleChange}></Form.Control>
-               </Col>
-               <Col>
-                  <Form.Check type='checkbox' label='apply' value={checked} onChange={handleCheck}/>
-               </Col>
-            </Row>
-         </Form>
+         <Row>
+            <Col>
+               <Form.Control name={`target_${props.attr}`} placeholder='target' 
+               onChange={handleChange} value={localFilters[`target_${props.attr}`] || ''}></Form.Control>
+            </Col>
+            <Col>
+               <Form.Control name={`min_${props.attr}`} placeholder='min' 
+               onChange={handleChange} value={localFilters[`min_${props.attr}`] || ''}></Form.Control>
+            </Col>
+            <Col>
+               <Form.Control name={`max_${props.attr}`} placeholder='max' 
+               onChange={handleChange} value={localFilters[`max_${props.attr}`] || ''}></Form.Control>
+            </Col>
+            <Col>
+               <Button onClick={applyFilters}>apply</Button>
+               <Button onClick={resetFilters}>reset</Button>
+            </Col>
+         </Row>
       )
    }
 
    return (
-      <Card>
-         <Card.Body>{friendlyName}</Card.Body>
-         {controls}
+      <Card border={borderState}>
+         <Card.Body onClick={() => console.log(JSON.stringify(filters, null, 2))}>{friendlyName}</Card.Body>
+         <Form>
+            {controls}
+         </Form>
       </Card>
    )
 }
 
+//TODO: tooltips for loudness, duration, key(?)
 export default function FilterBar(props) {
    const attrPerRow = 4;
    let attrGrid = [];

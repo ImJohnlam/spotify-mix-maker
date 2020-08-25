@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useContext} from 'react';
 import {Form, FormGroup, FormControl, Button, Card } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import { getTrack, searchTracks } from '../../api'
+import { getTrack, search } from '../../api'
 import { PlayerContext } from '../contexts'
 import queryString from 'query-string';
 import { SimpleTrack }  from '../components'
@@ -60,7 +60,7 @@ export default function Details(props) {
 
       ev.preventDefault()
 
-      searchTracks(query, tracks => {
+      search(query, tracks => {
          setSearchRes(tracks.map((track, idx) => <SimpleTrack track={track} key={idx}/>))
       });
    }
