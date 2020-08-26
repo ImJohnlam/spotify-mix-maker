@@ -43,14 +43,48 @@ export default function Seeder(props) {
    const [seedType, setSeedType] = useState('track')
    const [searchInput, setSearchInput] = useState('')
    const [searchRes, setSearchRes] = useState([])
-   const [selectedSeeds, setSelectedSeeds] = useState({})
+   const [selectedSeedObjs, setSelectedSeedsObjs] = useState({})
 
    const [seeds, setSeeds, filters, setFilters] = useContext(RecommenderContext);
 
-   let addSeed = (ev) => {
-      console.log(ev)
+   let calcNumSeeds = () => {
+      return Object.keys(seeds).reduce((acc, field) => {
+         console.log(`field=${field} acc=${acc} seeds[field]=${seeds[field]}`)
+         return acc + (seeds[field] ? seeds[field].length : 0)
+      }
+      , 0)
+
+   }
+
+   let addSeed = (targetProps) => {
+      let seedArrName = `seed_${targetProps.seedType}s`;
+      let seedArr = seeds[seedArrName] && seeds[seedArrName].slice()
+      let newSeedField = {};
+
+      if (calcNumSeeds() === 5) return;
+
+      console.log('(before)seeds=' + JSON.stringify(seeds, null, 2))
+      console.log(`(before)seedArr=${seedArr}`)
+      if (seedArr)
+         seedArr.push(targetProps.id)
+      else
+         seedArr = [targetProps.id]
+
+      
+      newSeedField[seedArrName] = seedArr
+      setSeeds({...seeds, ...newSeedField})
+      console.log(`(after)seedArr=${seedArr}`)
+      console.log(`newSeedField=${JSON.stringify(newSeedField)}`)
+      
+
+      console.log(`numSeeds=${calcNumSeeds()}`)
+      console.log('(after)seeds=' + JSON.stringify(seeds, null, 2))
+      console.log(this)
    };
-   let removeSeed;
+
+   let removeSeed = (ev) => {
+
+   };
 
    let handleChange = ev => {
       ev.preventDefault()
@@ -64,11 +98,13 @@ export default function Seeder(props) {
          setSearchInput(ev.target.value)
    };
 
-   let submit = ev => {
+   let submit = ev => {      
       let query = queryString.stringify({
          q: searchInput,
          type: seedType
       });
+
+      ev.preventDefault()
 
       if (seedType === 'genre') {
          console.log('genre search')
@@ -79,9 +115,9 @@ export default function Seeder(props) {
 
             if (seedType === 'track')
                seedItems = data.map((item, idx) => 
-               <a style={{cursor: 'pointer'}} onClick={addSeed}>
-                  <SimpleTrack track={item} key={idx}/>
-               </a>)
+               
+                  <SimpleTrack id={item.id} seedType='track' onCardClick={addSeed} data={item} key={idx}/>
+               )
 
             setSearchRes(seedItems)
          })
@@ -93,8 +129,11 @@ export default function Seeder(props) {
          <b onClick={() => console.log(`seedType=${seedType}, searchInput=${searchInput}`)}>seeder</b>
          <Card>
             <Row>
-               <Col onClick={addSeed}>test1</Col>
-               <Col>test2</Col>
+               <Col onClick={() => console.log(searchRes[0])}>test1</Col>
+               <Col onClick={() => console.log(JSON.stringify(seeds, null, 2))}>test2</Col>
+            </Row>
+            <Row>
+               {}
             </Row>
          </Card>
          <Form onSubmit={submit}>

@@ -6,18 +6,26 @@ import {PlayerContext} from '../contexts'
 export default props => {
    let [id, setId] = useContext(PlayerContext)
    let history = useHistory();
-   let track = props.track;
+   let data = props.data;
 
-   // TODO: change buttons to <a>
+   let goToDetails = () => {
+      history.push(`/details/${data.id}`);
+      window.scrollTo(0, 0)
+   }
+
+   // TODO: change buttons to <a> or img
    return (
-      <Card>
-         <img src={track.album.images[0].url} width='200' height='200'/>
-         <Card.Body>
-            {track.name} by: {track.artists.map(artist => artist.name).join(', ')} id={track.id}
-         </Card.Body>
-         <Button onClick={() => setId(track.id)}>Play</Button>
-         <Button onClick={() => {history.push(`/details/${track.id}`); window.scrollTo(0, 0)}}>Details</Button>
-         <Button onClick={() => window.open(track.external_urls.spotify)}>Spotify</Button>
-      </Card>
+      <div>
+         <Card style={{cursor: 'pointer'}} onClick={
+          props.onCardClick ? () => props.onCardClick(props) : goToDetails}>
+            <img src={data.album.images[0].url} width='200' height='200'/>
+            <Card.Body>
+               {data.name} by: {data.artists.map(artist => artist.name).join(', ')} id={data.id}
+            </Card.Body>
+         </Card>
+         <Button onClick={() => setId(data.id)}>Play</Button>
+         <Button onClick={goToDetails}>Details</Button>
+         <Button onClick={() => window.open(data.external_urls.spotify)}>Spotify</Button>
+      </div>
    )
 }

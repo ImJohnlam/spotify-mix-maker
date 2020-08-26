@@ -61,7 +61,7 @@ export default function Details(props) {
       ev.preventDefault()
 
       search(query, tracks => {
-         setSearchRes(tracks.map((track, idx) => <SimpleTrack track={track} key={idx}/>))
+         setSearchRes(tracks.map((track, idx) => <SimpleTrack data={track} key={idx}/>))
       });
    }
 

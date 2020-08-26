@@ -10,7 +10,7 @@ export default function Home(props) {
 
    useEffect(() => { 
       getTop(topTracks => {
-         setTracks(topTracks.map((track, idx) => <SimpleTrack track={track} key={idx}/>))
+         setTracks(topTracks.map((track, idx) => <SimpleTrack data={track} key={idx}/>))
       })
    }, [])
 
