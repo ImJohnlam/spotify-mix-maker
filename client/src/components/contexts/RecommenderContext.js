@@ -2,7 +2,7 @@ import React, { useState, createContext } from 'react'
 
 const RecommenderContext = createContext();
 const RecommenderContextProvider = props => {
-   const [seeds, setSeeds] = useState({})
+   let [seeds, setSeeds] = useState({})
    const [filters, setFilters] = useState({})
 
    return (

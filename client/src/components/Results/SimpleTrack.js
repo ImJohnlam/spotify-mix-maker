@@ -13,11 +13,15 @@ export default props => {
       window.scrollTo(0, 0)
    }
 
+   let openInSpotify = () => window.open(data.external_urls.spotify)
+
    // TODO: change buttons to <a> or img
+   // TODO: rm onCardClick
+   // NOTE: consider Nav/tabs for more track details
    return (
       <div>
          <Card style={{cursor: 'pointer'}} onClick={
-          props.onCardClick ? () => props.onCardClick(props) : goToDetails}>
+          data.onCardClick ? () => data.onCardClick(data) : goToDetails}>
             <img src={data.album.images[0].url} width='200' height='200'/>
             <Card.Body>
                {data.name} by: {data.artists.map(artist => artist.name).join(', ')} id={data.id}
@@ -25,7 +29,7 @@ export default props => {
          </Card>
          <Button onClick={() => setId(data.id)}>Play</Button>
          <Button onClick={goToDetails}>Details</Button>
-         <Button onClick={() => window.open(data.external_urls.spotify)}>Spotify</Button>
+         <Button onClick={openInSpotify}>Spotify</Button>
       </div>
    )
 }

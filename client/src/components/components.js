@@ -7,3 +7,5 @@ export {default as RecResults} from './Recommender/RecResults/RecResults'
 export {default as Player} from './Player/Player'
 
 export {default as SimpleTrack} from './Results/SimpleTrack'
+export {default as SimpleArtist} from './Results/SimpleArtist'
+export {default as SimpleGenre} from './Results/SimpleGenre'

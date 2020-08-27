@@ -2,40 +2,27 @@ import React, {useEffect, useState, Component, useContext} from 'react';
 import {Form, FormGroup, FormControl, Row, Col, Button, Card} from 'react-bootstrap';
 import { RecommenderContext } from '../../contexts'
 import queryString from 'query-string';
-import { search } from '../../../api'
-import { SimpleTrack }  from '../../components'
+import { search, getGenres } from '../../../api'
+import { SimpleTrack, SimpleArtist, SimpleGenre }  from '../../components'
 
-//these are items in the selectedseeds ?
-const TrackSeedItem = props => {
-   let data = props.data;
+const SeedResItem = props => {
+   const [seeds, setSeeds] = useContext(RecommenderContext);
 
    return (
-      <Card>
-         {<img src={data.album.images[0].url} width='200' height='200'/>}
+      <Card style={{cursor: 'pointer'}}onClick={() => props.onCardClick(props)}>
+         <img src={props.imgSrc} width='150' height='150'/>
          <Card.Body>
-            {data.name} by: {data.artists.map(artist => artist.name).join(', ')} id={data.id}
+            {props.name}
+            {props.desc}
          </Card.Body>
       </Card>
    )
 }
-
-const ArtistSeedItem = props => {
-   let data = props.data;
-
+const SeedSelectedItem = props => {
+   const [seeds, setSeeds] = useContext(RecommenderContext);
+   
    return (
-      <Card>
-
-      </Card>
-   )
-}
-
-const GenreSeedItem = props => {
-   let data = props.data;
-
-   return (
-      <Card>
-
-      </Card>
+      <div onClick={() => props.onCardClick({id: props.id})}>{props.id}</div>
    )
 }
 
@@ -43,9 +30,9 @@ export default function Seeder(props) {
    const [seedType, setSeedType] = useState('track')
    const [searchInput, setSearchInput] = useState('')
    const [searchRes, setSearchRes] = useState([])
-   const [selectedSeedObjs, setSelectedSeedsObjs] = useState({})
+   const [selectedSeedObjs, setSelectedSeedsObjs] = useState([])
 
-   const [seeds, setSeeds, filters, setFilters] = useContext(RecommenderContext);
+   const [seeds, setSeeds] = useContext(RecommenderContext);
 
    let calcNumSeeds = () => {
       return Object.keys(seeds).reduce((acc, field) => {
@@ -57,12 +44,14 @@ export default function Seeder(props) {
    }
 
    let addSeed = (targetProps) => {
-      let seedArrName = `seed_${targetProps.seedType}s`;
+      let seedArrName = `seed_${targetProps.type}s`;
+      // NOTE: might not need slice?
       let seedArr = seeds[seedArrName] && seeds[seedArrName].slice()
       let newSeedField = {};
 
-      if (calcNumSeeds() === 5) return;
+      if (calcNumSeeds() === 5 || (seedArr && seedArr.indexOf(targetProps.id) !== -1)) return;
 
+      console.log(searchInput)
       console.log('(before)seeds=' + JSON.stringify(seeds, null, 2))
       console.log(`(before)seedArr=${seedArr}`)
       if (seedArr)
@@ -73,13 +62,14 @@ export default function Seeder(props) {
       
       newSeedField[seedArrName] = seedArr
       setSeeds({...seeds, ...newSeedField})
+      
+      
       console.log(`(after)seedArr=${seedArr}`)
       console.log(`newSeedField=${JSON.stringify(newSeedField)}`)
       
 
       console.log(`numSeeds=${calcNumSeeds()}`)
       console.log('(after)seeds=' + JSON.stringify(seeds, null, 2))
-      console.log(this)
    };
 
    let removeSeed = (ev) => {
@@ -90,9 +80,11 @@ export default function Seeder(props) {
       ev.preventDefault()
 
       if (ev.target.name === 'seedType') {
+         setSearchInput('')
+         setSearchRes([])
          setSeedType(ev.target.value)
          if (ev.target.value === 'genre')
-            console.log('fetch genres and set here')
+            getGenres(data => setSearchRes(data));
       }
       else
          setSearchInput(ev.target.value)
@@ -106,23 +98,49 @@ export default function Seeder(props) {
 
       ev.preventDefault()
 
-      if (seedType === 'genre') {
-         console.log('genre search')
-      }
-      else {
+      if (searchInput) {
          search(query, data => {
             let seedItems;
 
-            if (seedType === 'track')
-               seedItems = data.map((item, idx) => 
-               
-                  <SimpleTrack id={item.id} seedType='track' onCardClick={addSeed} data={item} key={idx}/>
-               )
+            // if (seedType === 'track')
+               // seedItems = data.map((item, idx) => {
+               //    item.desc = `by: ${item.artists.map(artist => artist.name).join(', ')}`
+               //    item.imgSrc = item.album.images[0].url
+               //    item.onCardClick = addSeed;
+               //    item.seedType = 'track'
+               //    item.key = idx;
+               //    return <SeedResItem {...item}/>;
+               // })
 
-            setSearchRes(seedItems)
+            setSearchRes(data)
          })
       }
    };
+
+   // use React.createElement() here
+   let mapSearchRes = () => {
+      const seedCompMap = {
+         'track': SimpleTrack,
+         'artist': SimpleArtist,
+         'genre': SimpleGenre
+      }
+
+      return searchRes.length ?
+         searchRes.map((item, idx) => {
+            if (seedType === 'genre')
+               item = {name: item, id: item, type: 'genre'};
+            item.onCardClick = addSeed
+         
+         // return <SimpleTrack data={item} {...props}/>;
+         return React.createElement(seedCompMap[seedType], {data:item, key:idx})
+         })
+      : ''
+   }
+
+   let mapSelectedSeeds = () => {
+
+      
+   }
 
    return (
       <div>
@@ -131,6 +149,7 @@ export default function Seeder(props) {
             <Row>
                <Col onClick={() => console.log(searchRes[0])}>test1</Col>
                <Col onClick={() => console.log(JSON.stringify(seeds, null, 2))}>test2</Col>
+               <Col onClick={() => addSeed({id: 1})}>test3</Col>
             </Row>
             <Row>
                {}
@@ -147,7 +166,7 @@ export default function Seeder(props) {
             </FormGroup>
             <Button onClick={submit}>Search seed</Button>
          </Form>
-         {searchRes}
+         {mapSearchRes()}
       </div>
    )
 }

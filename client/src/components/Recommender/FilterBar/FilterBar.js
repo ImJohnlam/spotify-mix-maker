@@ -2,9 +2,9 @@ import React, {useEffect, useState, Component, useContext} from 'react';
 import {Form, FormGroup, FormControl, Row, Col, Button, Card} from 'react-bootstrap';
 import { RecommenderContext } from '../../contexts'
 
-const attributes = ['acousticness', 'danceability', 'duration_ms', 'energy', 
- 'valence', 'instrumentalness', 'key', 'liveness',
- 'loudness', 'popularity', 'speechiness', 'tempo']
+const attributes = ['acousticness', 'tempo', 'danceability', 'duration_ms',
+ 'energy', 'valence', 'instrumentalness', 'key',
+ 'liveness','loudness', 'popularity', 'speechiness']
 
 const attrFriendlyNames = {
    'acousticness': 'Acousticness',
@@ -18,7 +18,7 @@ const attrFriendlyNames = {
    'mode': 'Mode',
    'popularity': 'Popularity',
    'speechiness': 'Speechiness',
-   'tempo': 'Tempo',
+   'tempo': 'BPM',
    'valence': 'Happiness'
 }
 
@@ -132,6 +132,7 @@ const AttributeSetting = props => {
          <Form>
             {controls}
          </Form>
+         <div onClick={() => console.log(JSON.stringify(seeds, null, 2))}>TEST</div>
       </Card>
    )
 }

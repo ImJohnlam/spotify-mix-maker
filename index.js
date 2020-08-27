@@ -74,7 +74,7 @@ app.use((req, res, next) => {
 // TO DO: save client credentials to reuse
 // get client credentials
 app.use((req, res, next) => {
-   if (req.path === '/search' || req.path === '/top' || '/details') {
+   if (req.path === '/search' || req.path === '/top' || '/details' || req.path === '/genres') {
       const authOptions = {
          url: 'https://accounts.spotify.com/api/token',
          form: {
@@ -113,6 +113,20 @@ app.get('/search', (req, res) => {
       results.forEach((item) => console.log(item.name))
       res.json(results)
       console.log(req.query)
+   })
+})
+
+app.get('/genres', (req, res) => {
+   let options = {
+      url: 'https://api.spotify.com/v1/recommendations/available-genre-seeds',
+      headers: { Authorization: 'Bearer ' + req.accessToken },
+      json: true
+   };
+
+   request.get(options, (gErr, gRes, gBody) => {
+      console.log(JSON.stringify(gBody, null, 2))
+
+      res.json(gBody.genres)
    })
 })
 

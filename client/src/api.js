@@ -39,3 +39,9 @@ export function search(query, cb) {
    .then(res => res.json())
    .then(tracks => { if (cb) cb(tracks); })
 }
+
+export function getGenres(cb) {
+   return get('genres')
+   .then(res => res.json())
+   .then(genres => { if (cb) cb(genres); })
+}
