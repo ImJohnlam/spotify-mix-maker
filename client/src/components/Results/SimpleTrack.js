@@ -22,7 +22,7 @@ export default props => {
       <div>
          <Card style={{cursor: 'pointer'}} onClick={
           data.onCardClick ? () => data.onCardClick(data) : goToDetails}>
-            <img src={data.album.images[0].url} width='200' height='200'/>
+            <img src={data.imgSrc} width='200' height='200'/>
             <Card.Body>
                {data.name} by: {data.artists.map(artist => artist.name).join(', ')} id={data.id}
             </Card.Body>

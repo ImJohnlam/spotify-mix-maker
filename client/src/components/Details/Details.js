@@ -14,7 +14,7 @@ const TrackDetails = (props) => {
 
    return (
       <Card>
-         <img src={track.album.images[0].url} width='200' height='200'/>
+         <img src={track.imgSrc} width='200' height='200'/>
          <Card.Body>
             {track.name} by: {track.artists.map(artist => artist.name).join(', ')} id={track.id}
             <ul>

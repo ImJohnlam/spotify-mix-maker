@@ -10,7 +10,7 @@ export default props => {
       <div>
          <Card style={{cursor: 'pointer'}} onClick={
           data.onCardClick ? () => data.onCardClick(data) : temp}>
-            <img src={undefined} width='200' height='200'/>
+            <img src={data.imgSrc} width='200' height='200'/>
             <Card.Body>
                {data.name}
             </Card.Body>

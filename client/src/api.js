@@ -45,3 +45,9 @@ export function getGenres(cb) {
    .then(res => res.json())
    .then(genres => { if (cb) cb(genres); })
 }
+
+export function getRecommendations(query, cb) {
+   return get(`recommend?${query}`)
+   .then(res => res.json())
+   .then(tracks => { if (cb) cb(tracks)})
+}

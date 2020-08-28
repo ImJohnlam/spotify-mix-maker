@@ -22,7 +22,12 @@ const SeedSelectedItem = props => {
    const [seeds, setSeeds] = useContext(RecommenderContext);
    
    return (
-      <div onClick={() => props.onCardClick({id: props.id})}>{props.id}</div>
+      <Col>
+         <Card style={{cursor: 'pointer'}} onClick={() => props.onCardClick(props.id, props.type)}>
+            <img src={props.imgSrc} width='100' height='100'/>
+            {props.name}
+         </Card>
+      </Col>
    )
 }
 
@@ -32,22 +37,14 @@ export default function Seeder(props) {
    const [searchRes, setSearchRes] = useState([])
    const [selectedSeedObjs, setSelectedSeedsObjs] = useState([])
 
-   const [seeds, setSeeds] = useContext(RecommenderContext);
-
-   let calcNumSeeds = () => {
-      return Object.keys(seeds).reduce((acc, field) => {
-         console.log(`field=${field} acc=${acc} seeds[field]=${seeds[field]}`)
-         return acc + (seeds[field] ? seeds[field].length : 0)
-      }
-      , 0)
-
-   }
+   const [seeds, setSeeds, filters, setFilters, calcNumSeeds] = useContext(RecommenderContext);
 
    let addSeed = (targetProps) => {
       let seedArrName = `seed_${targetProps.type}s`;
       // NOTE: might not need slice?
       let seedArr = seeds[seedArrName] && seeds[seedArrName].slice()
       let newSeedField = {};
+      let newSelectedSeeds = selectedSeedObjs.slice()
 
       if (calcNumSeeds() === 5 || (seedArr && seedArr.indexOf(targetProps.id) !== -1)) return;
 
@@ -61,7 +58,9 @@ export default function Seeder(props) {
 
       
       newSeedField[seedArrName] = seedArr
+      newSelectedSeeds.push(targetProps)
       setSeeds({...seeds, ...newSeedField})
+      setSelectedSeedsObjs(newSelectedSeeds)
       
       
       console.log(`(after)seedArr=${seedArr}`)
@@ -72,8 +71,21 @@ export default function Seeder(props) {
       console.log('(after)seeds=' + JSON.stringify(seeds, null, 2))
    };
 
-   let removeSeed = (ev) => {
+   let removeSeed = (id, type) => {
+      let seedArrName = `seed_${type}s`;
+      let seedArr = seeds[seedArrName]
+      let newSeeds = {...seeds}
 
+      if (seedArr.length === 1)
+         delete newSeeds[seedArrName]
+      else
+         newSeeds[seedArrName] = seedArr.filter(seed => seed !== id)
+
+      console.log(`removing seed ${id} type ${type}`)
+
+
+      setSeeds(newSeeds)
+      setSelectedSeedsObjs(selectedSeedObjs.filter(obj => obj.id !== id))
    };
 
    let handleChange = ev => {
@@ -128,17 +140,23 @@ export default function Seeder(props) {
       return searchRes.length ?
          searchRes.map((item, idx) => {
             if (seedType === 'genre')
-               item = {name: item, id: item, type: 'genre'};
+               item = {
+                  name: item.split('-').map(genre => genre[0].toUpperCase() + genre.slice(1)).join(' '),
+                  id: item,
+                  type: 'genre'
+               };
             item.onCardClick = addSeed
-         
-         // return <SimpleTrack data={item} {...props}/>;
-         return React.createElement(seedCompMap[seedType], {data:item, key:idx})
+            return React.createElement(seedCompMap[seedType], {data:item, key:idx})
          })
       : ''
    }
 
    let mapSelectedSeeds = () => {
-
+      return selectedSeedObjs.length ?
+      selectedSeedObjs.map((item, idx) => {
+         return <SeedSelectedItem key={idx} type={item.type} id={item.id} name={item.name} imgSrc={item.imgSrc} onCardClick={removeSeed}/>
+      })
+      : ''
       
    }
 
@@ -150,9 +168,10 @@ export default function Seeder(props) {
                <Col onClick={() => console.log(searchRes[0])}>test1</Col>
                <Col onClick={() => console.log(JSON.stringify(seeds, null, 2))}>test2</Col>
                <Col onClick={() => addSeed({id: 1})}>test3</Col>
+               <Col onClick={() => console.log(JSON.stringify(selectedSeedObjs, null, 2))}>test2</Col>
             </Row>
             <Row>
-               {}
+               {mapSelectedSeeds()}
             </Row>
          </Card>
          <Form onSubmit={submit}>

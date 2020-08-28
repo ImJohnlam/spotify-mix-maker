@@ -74,7 +74,7 @@ app.use((req, res, next) => {
 // TO DO: save client credentials to reuse
 // get client credentials
 app.use((req, res, next) => {
-   if (req.path === '/search' || req.path === '/top' || '/details' || req.path === '/genres') {
+   if (req.path === '/search' || req.path === '/top' || '/details' || req.path === '/genres' || req.path === '/recommend') {
       const authOptions = {
          url: 'https://accounts.spotify.com/api/token',
          form: {
@@ -98,6 +98,15 @@ app.use((req, res, next) => {
       next();
 });
 
+let addImgSrc = (items, type) => {
+   items.forEach((item) => {
+      console.log(item.name)
+      if (type === 'track')
+         item.imgSrc = item.album.images[0].url
+      else if (type === 'artist')
+         item.imgSrc = item.images.length && item.images[0].url
+   })
+}
 
 app.get('/search', (req, res) => {
    let options = {
@@ -110,7 +119,14 @@ app.get('/search', (req, res) => {
       console.log(JSON.stringify(sBody, null, 2))
       let results = sBody[`${req.query.type}s`].items;
 
-      results.forEach((item) => console.log(item.name))
+      // results.forEach((item) => {
+      //    console.log(item.name)
+      //    if (req.query.type === 'track')
+      //       item.imgSrc = item.album.images[0].url
+      //    else if (req.query.type === 'artist')
+      //       item.imgSrc = item.images.length && item.images[0].url
+      // })
+      addImgSrc(results, req.query.type);
       res.json(results)
       console.log(req.query)
    })
@@ -255,12 +271,10 @@ app.get('/top', (req, res) => {
    }
    request.get(options, (error, response, body) => {
       console.log(body)
-      let playlistTracks = body.items;
-      console.log('printing top')
-      playlistTracks.forEach(pt => {
-         console.log(JSON.stringify(pt.track, null, 2))
-      })
-      res.send(playlistTracks.map(pt => pt.track))
+      let tracks = body.items.map(pt => pt.track);
+      addImgSrc(tracks, 'track')
+
+      res.send(tracks)
    })
 })
 
@@ -278,6 +292,8 @@ function addDetails(track) {
    track.loudness = Math.round(track.loudness).toString(10) + ' dB'
    ratings.forEach(attr => track[attr] = Math.round(parseFloat(track[attr]) * 100))
 }
+
+//TODO: add imgSrc handler w/ stock img path
 
 app.get('/details/:id', (req, res) => {
    const id = req.params.id;
@@ -297,6 +313,7 @@ app.get('/details/:id', (req, res) => {
       request.get(featuresOptions, (fErr, fRes, fBody) => {
          let detailedTrack = {...tBody, ...fBody};
          addDetails(detailedTrack)
+         addImgSrc([detailedTrack], 'track')
          console.log(`detailedTrack=${JSON.stringify(detailedTrack, null, 2)}`)
          res.send({...detailedTrack});
       })
@@ -305,21 +322,43 @@ app.get('/details/:id', (req, res) => {
 })
 
 app.get('/recommend', (req, res) => {
+   console.log('in recommend handler')
+   let query = querystring.stringify({...req.query});
    let options = {
-      url: 'https://api.spotify.com/v1/recommendations',
+      url: `https://api.spotify.com/v1/recommendations?${query}`,
       headers: { Authorization: 'Bearer ' + req.accessToken },
       json: true
    }
-   let query;
+   
 
-   delete req.query.access_token;
-   query = querystring.stringify({...req.query});
+   // NOTE: might need later?
+   // delete req.query.access_token;
+   
 
    request.get(options, (error, response, body) => {
-   
+      let tracks = body.tracks;
+      let featuresQuery = querystring.stringify({ids: body.tracks.map(track => track.id)})
+      let featuresOptions = {
+         url: `https://api.spotify.com/v1/audio-features?${featuresQuery}`,
+         headers: { Authorization: 'Bearer ' + req.accessToken },
+         json: true  
+      }
+      
+      request.get(featuresOptions, (fErr, fRes, fBody) => {
+         tracks.forEach((track, idx) =>  {
+            track = {...track, ...fBody.audio_features[idx]}
+            addDetails(track)
+         })
+         addImgSrc(tracks)
+
+         console.log('before send recommend')
+         res.send(tracks)
+         console.log('after send recommend')
+      })
+
+      
       // make call to track features
    })
-   res.end()
 })
 
 app.listen(PORT, () => {

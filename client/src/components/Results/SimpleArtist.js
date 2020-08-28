@@ -10,7 +10,7 @@ export default props => {
       <div>
          <Card style={{cursor: 'pointer'}} onClick={
           data.onCardClick ? () => data.onCardClick(data) : openInSpotify}>
-            <img src={data.images.length && data.images[0].url} width='200' height='200'/>
+            <img src={data.imgSrc} width='200' height='200'/>
             <Card.Body>
                {data.name} {data.genres.length && `genres: ${data.genres.join(', ')}`} id={data.id}
             </Card.Body>
