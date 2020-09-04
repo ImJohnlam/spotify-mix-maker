@@ -61,11 +61,13 @@ app.use((req, res, next) => {
 // decrypt tokens
 app.use((req, res, next) => {
    if (req.path === '/me')
-      req.accessToken = cryptoJS.AES.decrypt(req.query.access_token, creds.secret_key).toString(cryptoJS.enc.Utf8);
+      req.accessToken = cryptoJS.AES.decrypt(req.cookies.access_token, creds.secret_key).toString(cryptoJS.enc.Utf8)
+      // req.accessToken = cryptoJS.AES.decrypt(req.query.access_token, creds.secret_key).toString(cryptoJS.enc.Utf8);
    else if (req.path === '/refresh'){
       console.log(req.query)
+      console.log(`cookies=${JSON.stringify(req.cookies)}`)
       console.log(`req.query.refresh_token=${req.query.refresh_token}`)
-      req.refreshToken = cryptoJS.AES.decrypt(req.query.refresh_token, creds.secret_key).toString(cryptoJS.enc.Utf8);
+      req.refreshToken = cryptoJS.AES.decrypt(req.cookies.refresh_token, creds.secret_key).toString(cryptoJS.enc.Utf8);
    }
 
    next()
@@ -74,7 +76,9 @@ app.use((req, res, next) => {
 // TO DO: save client credentials to reuse
 // get client credentials
 app.use((req, res, next) => {
-   if (req.path === '/search' || req.path === '/top' || '/details' || req.path === '/genres' || req.path === '/recommend') {
+   if (req.path === '/me')
+      next()
+   else if (req.path === '/search' || req.path === '/top' || '/details' || req.path === '/genres' || req.path === '/recommend') {
       const authOptions = {
          url: 'https://accounts.spotify.com/api/token',
          form: {
@@ -85,7 +89,7 @@ app.use((req, res, next) => {
          }
       };
 
-      console.log('getting client credentials');
+      console.log(`getting client credentials req.path=${req.path}`);
       request.post(authOptions, (tErr, tRes, tBody) => {
          let authObj = JSON.parse(tBody);
          let accessToken = authObj.access_token;
@@ -214,7 +218,7 @@ app.get('/callback', (req, res) => {
          // res.send('cb');
          console.log('redirect back to client')
          
-         res.redirect('localhost:3001')
+         res.redirect(clientURL)
       });
    }
 });
@@ -241,7 +245,7 @@ app.get('/refresh', (req, res) => {
          res.cookie('access_token', cryptoJS.AES.encrypt(accessToken, creds.secret_key).toString())
          res.cookie('expiry_date', parseInt(body.expires_in * 1000) + Date.now())
          console.log(`refreshed, accessToken=${accessToken}`)
-         res.redirect('localhost:3001')
+         res.redirect(clientURL)
       }
     })
 });
@@ -254,11 +258,13 @@ app.get('/me', (req, res) => {
    };
 
    request.get(options, (error, resp, body) => {
+      console.log(`in /me accesstoken=${req.accessToken}\ncookes=${JSON.stringify(req.cookies)}\nres=${JSON.stringify(body, null, 2)}`)
       res.json(body)
    });
 })
 
 app.get('/top', (req, res) => {
+   // TODO: change to a map
    const playlistID = '37i9dQZEVXbLRQDuF5jeBp';
    let query = querystring.stringify({
       fields: 'items(track(name, external_urls, id, artists(name), album(images)))'
@@ -349,7 +355,7 @@ app.get('/recommend', (req, res) => {
             track = {...track, ...fBody.audio_features[idx]}
             addDetails(track)
          })
-         addImgSrc(tracks)
+         addImgSrc(tracks, 'track')
 
          console.log('before send recommend')
          res.send(tracks)

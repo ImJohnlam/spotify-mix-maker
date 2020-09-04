@@ -12,14 +12,18 @@ export default function RecResults(props) {
    const [seeds, setSeeds, filters, setFilters, calcNumSeeds] = useContext(RecommenderContext);
 
    let submit = ev => {
-      let query = queryString.stringify({...seeds, ...filters})
+      let seedStrs = {...seeds};
+      let query;
+      
+      Object.keys(seedStrs).forEach(seedKey => seedStrs[seedKey] = seedStrs[seedKey].join(','))
+      query = queryString.stringify({...seedStrs, ...filters})
       console.log(query)
       getRecommendations(query, tracks => setRecs(tracks))
 
    }
 
    let mapReccomendations = () => {
-      return recs.map(rec => <div>{rec.name}</div>)
+      return recs.map(rec => <SimpleTrack data={rec}/>)
    }
 
    // TODO: sort

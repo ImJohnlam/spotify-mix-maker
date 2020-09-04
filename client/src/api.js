@@ -22,6 +22,12 @@ function get(endpoint) {
    });
 }
 
+export function getMe(cb) {
+   return get('me')
+   .then(res => res.json())
+   .then(me => {if (cb) cb(me); })
+}
+
 export function getTop(cb) {
    return get('top')
    .then(res => res.json())
