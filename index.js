@@ -1,5 +1,6 @@
 const express = require('express');
 const request = require('request');
+const fetch = require('node-fetch')
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -25,6 +26,7 @@ const apiURL = ''
 const authReqConf = {}
 const authURL = ''
 
+let wrapAsync = fn => (req, res, next) => fn(req, res, next).catch(err => {console.log(err); res.send(err)})
 
 app.use(bodyParser());
 app.use(cookieParser());
@@ -37,6 +39,7 @@ else
 // app.use(cors());
 app.use(function(req, res, next) {
    console.log("Handling " + req.path + '/' + req.method);
+   console.log(`query=${JSON.stringify(req.query)}`)
    res.header("Access-Control-Allow-Origin", clientURL);
    res.header("Access-Control-Allow-Credentials", true);
    res.header("Access-Control-Allow-Headers", "Content-Type");
@@ -60,7 +63,7 @@ app.use((req, res, next) => {
 
 // decrypt tokens
 app.use((req, res, next) => {
-   if (req.path === '/me')
+   if (req.path === '/me' || req.path === '/userplaylists' || req.path === '/playlist')
       req.accessToken = cryptoJS.AES.decrypt(req.cookies.access_token, creds.secret_key).toString(cryptoJS.enc.Utf8)
       // req.accessToken = cryptoJS.AES.decrypt(req.query.access_token, creds.secret_key).toString(cryptoJS.enc.Utf8);
    else if (req.path === '/refresh'){
@@ -76,7 +79,7 @@ app.use((req, res, next) => {
 // TO DO: save client credentials to reuse
 // get client credentials
 app.use((req, res, next) => {
-   if (req.path === '/me')
+   if (req.path === '/me' || req.path === '/userplaylists' || req.path === '/playlist')
       next()
    else if (req.path === '/search' || req.path === '/top' || '/details' || req.path === '/genres' || req.path === '/recommend') {
       const authOptions = {
@@ -102,12 +105,13 @@ app.use((req, res, next) => {
       next();
 });
 
+// TODO: stock img
 let addImgSrc = (items, type) => {
    items.forEach((item) => {
-      console.log(item.name)
+      // console.log(item.name)
       if (type === 'track')
          item.imgSrc = item.album.images[0].url
-      else if (type === 'artist')
+      else if (type === 'artist' || type === 'playlist')
          item.imgSrc = item.images.length && item.images[0].url
    })
 }
@@ -161,7 +165,7 @@ app.get('/login', (req, res) => {
          response_type: 'code',
          redirect_uri: redirectURI,
          state: state,
-         scope: 'user-read-private user-read-email'
+         scope: 'user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private'
    }));
 });
 
@@ -263,45 +267,105 @@ app.get('/me', (req, res) => {
    });
 })
 
-app.get('/top', (req, res) => {
-   // TODO: change to a map
-   const playlistID = '37i9dQZEVXbLRQDuF5jeBp';
-   let query = querystring.stringify({
-      fields: 'items(track(name, external_urls, id, artists(name), album(images)))'
-   })
-
+app.get('/userplaylists', wrapAsync(async (req, res) => {
+   let query = querystring.stringify({...req.query});
+   let url = `https://api.spotify.com/v1/me/playlists?${query}`
    let options = {
-      url: `https://api.spotify.com/v1/playlists/${playlistID}/tracks?` + query,
       headers: { Authorization: 'Bearer ' + req.accessToken },
       json: true
    }
-   request.get(options, (error, response, body) => {
-      console.log(body)
-      let tracks = body.items.map(pt => pt.track);
-      addImgSrc(tracks, 'track')
 
-      res.send(tracks)
-   })
+   let playlists = await fetch(url, options).then(data => data.json())
+   console.log(JSON.stringify(playlists, null, 2))
+   addImgSrc(playlists.items, 'playlist')
+   res.send(playlists)
+   console.log(`userplaylist url=${url}`)
+}))
+
+app.post('/playlist', wrapAsync(async (req, res) => {
+   let userInfoURL = 'https://api.spotify.com/v1/me'
+   let userInfoOptions = {
+      headers: { Authorization: 'Bearer ' + req.accessToken },
+      json: true
+   };
+
+   let userInfo = await fetch(userInfoURL, userInfoOptions).then(data => data.json())
+   console.log(JSON.stringify(userInfo, null, 2))
+   let createPlaylistURL = `https://api.spotify.com/v1/users/${userInfo.id}/playlists`
+   let createPlaylistOptions = {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + req.accessToken },
+      'Content-Type': 'application/json',
+      body: JSON.stringify({name: req.body.name}),
+      json: true
+   }
+
+   let newPlaylist = await fetch(createPlaylistURL, createPlaylistOptions).then(data => data.json())
+   console.log(newPlaylist)
+   res.send(newPlaylist)
+
+}))
+
+app.post('/playlist/:trackID', (req, res) => {
+
 })
 
-function addDetails(track) {
-   const keys = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
-   const camelotNum = ((7 * track.key) + 5 + (track.mode ? 3 : 0)) % 12 || 12;
-   const minutes = Math.round(track.duration_ms / 60000);
-   const seconds = Math.round(track.duration_ms / 1000) % 60;
-   const ratings = ['acousticness', 'danceability', 'energy', 'instrumentalness', 'liveness', 'speechiness', 'valence']
+app.delete('/playlistitems/:playlistID', (req, res) => {
 
-   track.classical = keys[track.key] + (track.mode ? ' Major' : ' Minor');
-   track.camelot = camelotNum.toString(10) + (track.mode ? 'B' : 'A')
-   track.duration_min = minutes.toString(10) + ':' + (seconds < 10 ? '0' : '') + seconds.toString(10);
-   track.bpm = Math.round(track.tempo);
-   track.loudness = Math.round(track.loudness).toString(10) + ' dB'
-   ratings.forEach(attr => track[attr] = Math.round(parseFloat(track[attr]) * 100))
+})
+
+
+
+app.get('/playlistitems/:playlistID', wrapAsync(async (req, res) => {
+   let query = querystring.stringify({
+      ...req.query,
+      fields: 'items(track(name, external_urls, id, artists(name), album(images)))'
+   });
+   const playlistID = req.params.playlistID;
+   
+   let url = `https://api.spotify.com/v1/playlists/${playlistID}/tracks?` + query;
+   let options = {
+      headers: { Authorization: 'Bearer ' + req.accessToken },
+      json: true
+   }
+   // try{
+   const playlistItems = await fetch(url, options).then(data => data.json())
+   console.log(JSON.stringify(playlistItems, null, 2))
+   let tracks = playlistItems.items.map(pt => pt.track);
+   addImgSrc(tracks, 'track')
+   res.send(tracks)
+   // }
+   // catch(e) {console.log(`e:${e}`)}
+   
+   // request.get(options, (error, response, body) => {
+   //    console.log(body)
+   //    let tracks = body.items.map(pt => pt.track);
+   //    addImgSrc(tracks, 'track')
+   //    res.send(tracks)
+   // })
+   console.log('playlist item end')
+}))
+
+function addDetails(tracks) {
+   tracks.forEach(track => {
+      const keys = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
+      const camelotNum = ((7 * track.key) + 5 + (track.mode ? 3 : 0)) % 12 || 12;
+      const minutes = Math.round(track.duration_ms / 60000);
+      const seconds = Math.round(track.duration_ms / 1000) % 60;
+      const ratings = ['acousticness', 'danceability', 'energy', 'instrumentalness', 'liveness', 'speechiness', 'valence']
+
+      track.classical = keys[track.key] + (track.mode ? ' Major' : ' Minor');
+      track.camelot = camelotNum.toString(10) + (track.mode ? 'B' : 'A')
+      track.duration_min = minutes.toString(10) + ':' + (seconds < 10 ? '0' : '') + seconds.toString(10);
+      track.bpm = Number.parseFloat(track.tempo).toFixed(2); // NOTE: consider rounding to 2 decimal places
+      track.loudness = Math.round(track.loudness).toString(10) + ' dB'
+      ratings.forEach(attr => track[attr] = Math.round(parseFloat(track[attr]) * 100))
+   })
 }
 
 //TODO: add imgSrc handler w/ stock img path
 
-app.get('/details/:id', (req, res) => {
+app.get('/details/:id', async (req, res) => {
    const id = req.params.id;
    let trackOptions = {
       url: `https://api.spotify.com/v1/tracks/${id}`,
@@ -318,7 +382,7 @@ app.get('/details/:id', (req, res) => {
 
       request.get(featuresOptions, (fErr, fRes, fBody) => {
          let detailedTrack = {...tBody, ...fBody};
-         addDetails(detailedTrack)
+         addDetails([detailedTrack])
          addImgSrc([detailedTrack], 'track')
          console.log(`detailedTrack=${JSON.stringify(detailedTrack, null, 2)}`)
          res.send({...detailedTrack});
@@ -353,7 +417,7 @@ app.get('/recommend', (req, res) => {
       request.get(featuresOptions, (fErr, fRes, fBody) => {
          tracks.forEach((track, idx) =>  {
             track = {...track, ...fBody.audio_features[idx]}
-            addDetails(track)
+            addDetails([track])
          })
          addImgSrc(tracks, 'track')
 

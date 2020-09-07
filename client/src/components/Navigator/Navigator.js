@@ -8,6 +8,7 @@ import { getMe } from '../../api'
 export default function Navigator(props) {
    const [user, setUser] = useState("");
 
+   // TODO: fix refresh
 
    // priority show name, refresh, show login button
    useEffect(() => {

@@ -1,7 +1,7 @@
 import React, {useEffect, useState, Component, useContext} from 'react';
 import {Form, FormGroup, FormControl, Row, Col, Button, Card} from 'react-bootstrap';
 import queryString from 'query-string';
-import {FilterBar, Seeder, RecResults} from '../components'
+import {FilterBar, Seeder, RecResults, PlaylistTracker} from '../components'
 import { RecommenderContext, RecommenderContextProvider } from '../contexts'
 
 export default function Recommender(props) {
@@ -9,9 +9,8 @@ export default function Recommender(props) {
    return (
       <section className='container'>
          <h1>--Recommender--</h1>
-         
+         <p>instructions here</p>
          <RecommenderContextProvider>
-            <Button onClick={() => console.log(0)}>test button</Button>
             <FilterBar/>
             <Row>
                <Col>
@@ -19,6 +18,9 @@ export default function Recommender(props) {
                </Col>
                <Col>
                   <RecResults/>
+               </Col>
+               <Col>
+                  <PlaylistTracker/>
                </Col>
             </Row>
          </RecommenderContextProvider>

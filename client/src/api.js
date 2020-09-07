@@ -11,13 +11,28 @@ const reqConf = {
    credentials: 'include',
 };
 
-function chkFetch(url, body) {
-   return fetch(url, body);
+function chkFetch(url, options) {
+   return fetch(url, options);
 }
 
 function get(endpoint) {
    return chkFetch(baseURL + endpoint, {
       method: 'GET',
+      ...reqConf
+   });
+}
+
+export function post(endpoint, body) {
+   return chkFetch(baseURL + endpoint, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      ...reqConf
+   });
+}
+
+export function del(endpoint) {
+   return chkFetch(baseURL + endpoint, {
+      method: 'DELETE',
       ...reqConf
    });
 }
@@ -28,10 +43,22 @@ export function getMe(cb) {
    .then(me => {if (cb) cb(me); })
 }
 
-export function getTop(cb) {
-   return get('top')
+export function getUserPlaylists(query, cb) {
+   return get(`userplaylists${query ? '?' + query : ''}`)
+   .then(res => res.json())
+   .then(playlists => {if (cb) cb(playlists); })
+}
+
+export function getPlaylistItems(id, query, cb) {
+   return get(`playlistitems/${id}${query ? '?' + query : ''}`)
    .then(res => res.json())
    .then(tracks => {if (cb) cb(tracks); })
+}
+
+export function createPlaylist(body, cb) {
+   return post('playlist', body)
+   .then(res => res.json())
+   .then(playlist => { if (cb) cb(playlist); })
 }
 
 export function getTrack(id, cb) {

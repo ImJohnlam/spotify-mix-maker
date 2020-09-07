@@ -37,7 +37,7 @@ export default function Seeder(props) {
    const [searchRes, setSearchRes] = useState([])
    const [selectedSeedObjs, setSelectedSeedsObjs] = useState([])
 
-   const [seeds, setSeeds, filters, setFilters, calcNumSeeds] = useContext(RecommenderContext);
+   const [seeds, setSeeds, calcNumSeeds, filters, setFilters] = useContext(RecommenderContext);
 
    let addSeed = (targetProps) => {
       let seedArrName = `seed_${targetProps.type}s`;
@@ -162,7 +162,7 @@ export default function Seeder(props) {
 
    return (
       <div>
-         <b onClick={() => console.log(`seedType=${seedType}, searchInput=${searchInput}`)}>seeder</b>
+         <h1 onClick={() => console.log(`seedType=${seedType}, searchInput=${searchInput}`)}>SEEDER</h1>
          <Card>
             <Row>
                <Col onClick={() => console.log(searchRes[0])}>test1</Col>

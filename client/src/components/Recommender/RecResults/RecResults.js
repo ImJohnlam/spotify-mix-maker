@@ -9,7 +9,8 @@ import { SimpleTrack }  from '../../components'
 export default function RecResults(props) {
    const [recs, setRecs] = useState([])
    const [sortField, setSortField] = useState('')
-   const [seeds, setSeeds, filters, setFilters, calcNumSeeds] = useContext(RecommenderContext);
+   const [seeds, setSeeds, calcNumSeeds, filters, setFilters, curPlaylistID,
+    setCurPlaylistID, playlistUpdate, setPlaylistUpdate] = useContext(RecommenderContext)
 
    let submit = ev => {
       let seedStrs = {...seeds};
@@ -26,11 +27,11 @@ export default function RecResults(props) {
       return recs.map(rec => <SimpleTrack data={rec}/>)
    }
 
+   // TODO: make onCardClick (which calls setPlaylistUpdate)
    // TODO: sort
    return (
       <div>
-         <p onClick={() => {console.log(JSON.stringify(recs, null, 2)); console.log(`# recomends = ${recs.length}`)}}>test</p>
-         <b>RESULTS HERE</b>
+         <h1 onClick={() => {console.log(JSON.stringify(recs, null, 2)); console.log(`# recomends = ${recs.length}`)}}>RECOMMENDED TRACKS</h1>
          <Button onClick={submit} disabled={!calcNumSeeds()}>Get Reccommendations</Button>
          {mapReccomendations()}
 
