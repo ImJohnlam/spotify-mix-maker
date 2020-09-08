@@ -11,7 +11,10 @@ const reqConf = {
    credentials: 'include',
 };
 
+
+// NOTE: if refresh token expire, refresh mb?
 function chkFetch(url, options) {
+   console.log(`fetching ${url}`)
    return fetch(url, options);
 }
 
@@ -30,9 +33,10 @@ export function post(endpoint, body) {
    });
 }
 
-export function del(endpoint) {
+export function del(endpoint, body) {
    return chkFetch(baseURL + endpoint, {
       method: 'DELETE',
+      body: JSON.stringify(body),
       ...reqConf
    });
 }
@@ -59,6 +63,18 @@ export function createPlaylist(body, cb) {
    return post('playlist', body)
    .then(res => res.json())
    .then(playlist => { if (cb) cb(playlist); })
+}
+
+export function addTrackToPlaylist(playlistID, query, cb) {
+   return post(`playlist/${playlistID}${query}`)
+   .then(res => res.json())
+   .then(addRes => {if (cb) cb(addRes)} )
+}
+
+export function deleteTrackFromPlaylist(playlistID, body, cb) {
+   return del(`playlistitems/${playlistID}`, body)
+   .then(res => res.json())
+   .then(delRes => {if (cb) cb(delRes); })
 }
 
 export function getTrack(id, cb) {

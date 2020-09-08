@@ -2,7 +2,8 @@ import React, {useEffect, useState, Component, useContext} from 'react';
 import {Form, FormGroup, FormControl, Row, Col, Button, Card} from 'react-bootstrap';
 import { RecommenderContext } from '../../contexts'
 import queryString from 'query-string';
-import { createPlaylist, getUserPlaylists, getPlaylistItems } from '../../../api'
+import Cookies from 'js-cookie'
+import { createPlaylist, getUserPlaylists, getPlaylistItems, deleteTrackFromPlaylist } from '../../../api'
 import { SimpleTrack, SimplePlaylist }  from '../../components'
 
 
@@ -11,6 +12,8 @@ export default function PlaylistTrack(props) {
     setCurPlaylistID, playlistUpdate, setPlaylistUpdate] = useContext(RecommenderContext)
    const [items, setItems] = useState([])
    const [curPlaylist, setCurPlaylist] = useState(null)
+
+   // NOTE: might not need useState?
    const [prevPageQuery, setPrevPageQuery] = useState(null)
    const [nextPageQuery, setNextPageQuery] = useState(null)
    
@@ -40,11 +43,19 @@ export default function PlaylistTrack(props) {
 
    let handleGetTracks = query => {
       getPlaylistItems(curPlaylistID, query, tracks => {
-         setItems(tracks.map((track, idx) => <SimpleTrack data={track} key={idx}/>))
+         setItems(tracks.map((track, idx) => {
+            track.onCardClick = deleteTrack;
+            return <SimpleTrack data={track} key={idx}/>
+         }))
       })
    }
 
    useEffect(() => {
+      if (!Cookies.get('expiry_date') || parseInt(Cookies.get('expiry_date')) < Date.now()) {
+         console.log('not fetching playlists')
+         return;
+      }
+
       console.log('useEffect called')
       if (curPlaylistID) {
          console.log('fetch playlist tracks')
@@ -59,16 +70,16 @@ export default function PlaylistTrack(props) {
    // NOTE: playlistUpdate might be unnecessary?
 
    let prevPage = () => {
-      if (curPlaylistID)
-         handleGetTracks(prevPageQuery)
-      else
+      // if (curPlaylistID)
+      //    handleGetTracks(prevPageQuery)
+      // else
          handleGetPlaylists(prevPageQuery)
    }
 
    let nextPage = () => {
-      if (curPlaylistID)
-         handleGetTracks(nextPageQuery)
-      else
+      // if (curPlaylistID)
+      //    handleGetTracks(nextPageQuery)
+      // else
          handleGetPlaylists(nextPageQuery)
    }
 
@@ -87,6 +98,15 @@ export default function PlaylistTrack(props) {
       setCurPlaylist(<SimplePlaylist data={data}/>)
       setPrevPageQuery('')
       setNextPageQuery('')
+   }
+
+   let deleteTrack = data => {
+      let body = {tracks: [{uri: data.uri}]}
+      console.log(`deleteTrack body=${JSON.stringify(body, null, 2)}`)
+      deleteTrackFromPlaylist(curPlaylistID, body, delRes => {
+         console.log(`delRes=${JSON.stringify(delRes, null, 2)}`)
+         setPlaylistUpdate(delRes)
+      })
    }
 
    return (

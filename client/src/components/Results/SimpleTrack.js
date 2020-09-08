@@ -21,7 +21,7 @@ export default props => {
    return (
       <div>
          <Card style={{cursor: 'pointer'}} onClick={
-          data.onCardClick ? () => data.onCardClick(data) : goToDetails}>
+          data.onCardClick ? () => {console.log(`calling cardclick data=${JSON.stringify(data)}`); data.onCardClick(data);} : goToDetails}>
             <img src={data.imgSrc} width='200' height='200'/>
             <Card.Body>
                {data.name} by: {data.artists.map(artist => artist.name).join(', ')} id={data.id}

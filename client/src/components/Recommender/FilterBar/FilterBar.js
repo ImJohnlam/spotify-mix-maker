@@ -29,7 +29,7 @@ const AttributeSetting = props => {
 
    const [localFilters, setLocalFilters] = useState({})
    const [borderState, setBorderState] = useState(false)
-   const [seeds, setSeeds, filters, setFilters] = useContext(RecommenderContext);
+   const [seeds, setSeeds, calcNumSeeds, filters, setFilters] = useContext(RecommenderContext)
 
    let applyFilters = ev => {
       let newFilters;

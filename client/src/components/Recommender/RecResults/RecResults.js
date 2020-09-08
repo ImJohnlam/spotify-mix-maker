@@ -2,7 +2,7 @@ import React, {useEffect, useState, Component, useContext} from 'react';
 import {Form, FormGroup, FormControl, Row, Col, Button, Card} from 'react-bootstrap';
 import { RecommenderContext } from '../../contexts'
 import queryString from 'query-string';
-import { getRecommendations } from '../../../api'
+import { getRecommendations, addTrackToPlaylist } from '../../../api'
 import { SimpleTrack }  from '../../components'
 
 
@@ -23,8 +23,21 @@ export default function RecResults(props) {
 
    }
 
+   let addTrack = data => {
+      if (curPlaylistID) {
+         console.log('adding track to playlist')
+         addTrackToPlaylist(curPlaylistID, '?' + queryString.stringify({uris: data.uri}), data => {
+            console.log(JSON.stringify(data))
+            setPlaylistUpdate(data)
+         })
+      }
+   }
+
    let mapReccomendations = () => {
-      return recs.map(rec => <SimpleTrack data={rec}/>)
+      return recs.map(rec => {
+         rec.onCardClick = addTrack
+         return <SimpleTrack data={rec}/>
+      })
    }
 
    // TODO: make onCardClick (which calls setPlaylistUpdate)
@@ -32,6 +45,7 @@ export default function RecResults(props) {
    return (
       <div>
          <h1 onClick={() => {console.log(JSON.stringify(recs, null, 2)); console.log(`# recomends = ${recs.length}`)}}>RECOMMENDED TRACKS</h1>
+         <Button onClick={() => addTrackToPlaylist('7hudEXa3coGjanstJBgtMf', '?uris=spotify:track:3xaugmCyXrVkrDTXbFkMW3', data => console.log(JSON.stringify(data, null, 2)))}>TEST ADD TRACK TO PLAYLIST</Button>
          <Button onClick={submit} disabled={!calcNumSeeds()}>Get Reccommendations</Button>
          {mapReccomendations()}
 

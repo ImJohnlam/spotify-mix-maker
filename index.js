@@ -63,7 +63,7 @@ app.use((req, res, next) => {
 
 // decrypt tokens
 app.use((req, res, next) => {
-   if (req.path === '/me' || req.path === '/userplaylists' || req.path === '/playlist')
+   if (req.path === '/me' || req.path === '/userplaylists' || req.path.includes('/playlist'))
       req.accessToken = cryptoJS.AES.decrypt(req.cookies.access_token, creds.secret_key).toString(cryptoJS.enc.Utf8)
       // req.accessToken = cryptoJS.AES.decrypt(req.query.access_token, creds.secret_key).toString(cryptoJS.enc.Utf8);
    else if (req.path === '/refresh'){
@@ -79,7 +79,7 @@ app.use((req, res, next) => {
 // TO DO: save client credentials to reuse
 // get client credentials
 app.use((req, res, next) => {
-   if (req.path === '/me' || req.path === '/userplaylists' || req.path === '/playlist')
+   if (req.path === '/me' || req.path === '/userplaylists' || req.path.includes('/playlist'))
       next()
    else if (req.path === '/search' || req.path === '/top' || '/details' || req.path === '/genres' || req.path === '/recommend') {
       const authOptions = {
@@ -306,20 +306,40 @@ app.post('/playlist', wrapAsync(async (req, res) => {
 
 }))
 
-app.post('/playlist/:trackID', (req, res) => {
+app.post('/playlist/:playlistID', wrapAsync(async (req, res) => {
+   const query = querystring.stringify({
+      ...req.query
+   })
+   const url = `https://api.spotify.com/v1/playlists/${req.params.playlistID}/tracks?${query}`
+   const options = {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + req.accessToken },
+      json: true
+   }
+   const addTrackRes = await fetch(url, options).then(data => data.json());
+   console.log(`addTrackRes=${JSON.stringify(addTrackRes)}`)
+   res.send(addTrackRes)
+}))
 
-})
+app.delete('/playlistitems/:playlistID', wrapAsync(async (req, res) => {
+   const url = `https://api.spotify.com/v1/playlists/${req.params.playlistID}/tracks`
+   const options = {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + req.accessToken },
+      'Content-Type': 'application/json',
+      body: JSON.stringify({tracks: req.body.tracks}),
+      json: true
+   }
 
-app.delete('/playlistitems/:playlistID', (req, res) => {
-
-})
-
-
+   const delTrackRes = await fetch(url, options).then(data => data.json());
+   console.log(`delTrackRes=${JSON.stringify(delTrackRes)}`)
+   res.send(delTrackRes)
+}))
 
 app.get('/playlistitems/:playlistID', wrapAsync(async (req, res) => {
    let query = querystring.stringify({
       ...req.query,
-      fields: 'items(track(name, external_urls, id, artists(name), album(images)))'
+      fields: 'items(track(name, external_urls, id, uri, artists(name), album(images)))'
    });
    const playlistID = req.params.playlistID;
    
