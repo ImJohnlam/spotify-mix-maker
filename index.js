@@ -63,7 +63,7 @@ app.use((req, res, next) => {
 
 // decrypt tokens
 app.use((req, res, next) => {
-   if (req.path === '/me' || req.path === '/userplaylists' || req.path.includes('/playlist'))
+   if (req.path === '/me' || req.path === '/userplaylists' || (req.path.includes('/playlist') && req.method !== 'GET'))
       req.accessToken = cryptoJS.AES.decrypt(req.cookies.access_token, creds.secret_key).toString(cryptoJS.enc.Utf8)
       // req.accessToken = cryptoJS.AES.decrypt(req.query.access_token, creds.secret_key).toString(cryptoJS.enc.Utf8);
    else if (req.path === '/refresh'){
@@ -79,7 +79,7 @@ app.use((req, res, next) => {
 // TO DO: save client credentials to reuse
 // get client credentials
 app.use((req, res, next) => {
-   if (req.path === '/me' || req.path === '/userplaylists' || req.path.includes('/playlist'))
+   if (req.path === '/me' || req.path === '/userplaylists' || (req.path.includes('/playlist') && req.method !== 'GET'))
       next()
    else if (req.path === '/search' || req.path === '/top' || '/details' || req.path === '/genres' || req.path === '/recommend') {
       const authOptions = {
