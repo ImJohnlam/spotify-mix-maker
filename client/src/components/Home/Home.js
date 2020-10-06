@@ -36,7 +36,14 @@ export default function Home(props) {
             <option value='ustop50'>US TOP 50</option>
             <option value='globaltop50'>GLOBAL TOP 50</option>
          </FormControl>
-         {tracks}
+         {tracks.length ? 
+         <div className='border border-primary'>
+            {tracks}
+         </div>
+         :
+         ""
+         } 
+         
       </section>
    )
 }

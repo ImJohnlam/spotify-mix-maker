@@ -3,10 +3,15 @@ import {Navbar, Button, Nav, Form, FormControl} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import queryString from 'query-string';
 import Cookies from 'js-cookie'
-import { getMe } from '../../api'
+import { baseURL, getMe } from '../../api'
+import './Navigator.css';
+import { useHistory } from 'react-router-dom';
 
 export default function Navigator(props) {
    const [user, setUser] = useState("");
+   const [searchInput, setSearchInput] = useState("");
+
+   const history = useHistory();
 
    // TODO: fix refresh
 
@@ -23,7 +28,7 @@ export default function Navigator(props) {
          //expired access token, must refresh
          if (parseInt(Cookies.get('expiry_date')) < Date.now()) {
             console.log('refreshing bc expired token')
-            window.location.assign('http://localhost:3000/refresh?' + queryString.stringify({refresh_token: Cookies.get('refresh_token')}))
+            window.location.assign(`${baseURL}refresh?${queryString.stringify({refresh_token: Cookies.get('refresh_token')})}`)
          }
          
          getMe(me => setUser(me.display_name))
@@ -34,11 +39,21 @@ export default function Navigator(props) {
 
    // if can't log in, show login button
 
+   let search = ev => {
+      ev && ev.preventDefault();
+      history.push(`/details?q=${searchInput}`);
+      window.scrollTo(0, 0);
+   }
+
    // NOTE: don't use query param in refresh/login
 
    return (
       <Navbar>
-         <Navbar.Brand href='/'>HOME</Navbar.Brand>
+         <Navbar.Brand href='/'>
+            <span className="fa fa-music"/>
+            {"     "}
+            HOME
+         </Navbar.Brand>
          <Navbar.Toggle/>
          <Navbar.Collapse>
             <Nav>
@@ -50,13 +65,12 @@ export default function Navigator(props) {
                </LinkContainer>
             </Nav>
          </Navbar.Collapse>
-         <Form inline>
-            <FormControl placeholder='search track'></FormControl>
-            <Button>search</Button>
+         <Form inline onSubmit={search}>
+            <FormControl placeholder='search track' onChange={ev => setSearchInput(ev.target.value)}></FormControl>
+            <Button onClick={search}>search</Button>
          </Form>
-         <Button onClick={() => window.location.assign('http://localhost:3000/login')}>login to access playlists</Button>
-         <Button onClick={() => window.location.assign('http://localhost:3000/refresh?' + queryString.stringify({refresh_token: Cookies.get('refresh_token')}))}>refresh token</Button>
-         <Button onClick={() => fetch('http://localhost:3000/login').then(res => console.log(`test button res=${res}`))}>test</Button>
+         <Button onClick={() => window.location.assign(`${baseURL}login`)}>login to access playlists</Button>
+         <Button onClick={() => window.location.assign(`${baseURL}refresh?${queryString.stringify({refresh_token: Cookies.get('refresh_token')})}`)}>refresh token</Button>
          {user && <p>logged in as {user}</p>}
       </Navbar>
    )

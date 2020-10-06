@@ -42,7 +42,7 @@ export default function Details(props) {
       const urlSplit = window.location.pathname.split('/')
       const id = urlSplit[urlSplit.length - 1];
 
-      console.log(`details pathname: ${window.location.pathname} id=${id}`)
+      console.log(`details pathname: ${window.location.pathname} id='${id}'`)
       if (id !== path) {
          getTrack(id, detailedTrack => {
             setTrack(<TrackDetails track={detailedTrack}></TrackDetails>)
@@ -50,19 +50,36 @@ export default function Details(props) {
       }
    }, [window.location.pathname])
 
+   // useEffect(() => {
+   //    let query = queryString.parse(window.location.search)
+   //    if (query.q) {
+   //       console.log(`query.q=${query.q}`)
+   //       setSearchInput(query.q);
+   //    }
+   // }, [window.location.search])
+
+   useEffect(() => {
+      let query;
+      if (window.location.search) {
+         query = queryString.stringify({
+            q: (queryString.parse(window.location.search)).q,
+            type: 'track'
+         });
+         console.log(`searching for results, q=${query.q}`)
+         console.log(queryString.parse(window.location.search))
+         search(query, tracks => {
+            setSearchRes(tracks.map((track, idx) => <SimpleTrack data={track} key={idx}/>))
+         });
+      }
+   }, [window.location.search])
+
    let handleChange = ev => setSearchInput(ev.target.value)
    
    let submit = (ev) => {
-      let query = queryString.stringify({
-         q: searchInput,
-         type: 'track'
-      })
-
+      const path = window.location.pathname || ""
       ev.preventDefault()
 
-      search(query, tracks => {
-         setSearchRes(tracks.map((track, idx) => <SimpleTrack data={track} key={idx}/>))
-      });
+      history.push(`${path}?q=${searchInput}`)
    }
 
    return (

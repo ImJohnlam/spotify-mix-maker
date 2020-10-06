@@ -1,5 +1,5 @@
 import React, {useEffect, useState, Component, useContext} from 'react';
-import {Form, FormGroup, FormControl, Row, Col, Button, Card} from 'react-bootstrap';
+import {Form, FormGroup, FormControl, Row, Col, Button, Card, Collapse} from 'react-bootstrap';
 import { RecommenderContext } from '../../contexts'
 
 const attributes = ['acousticness', 'tempo', 'danceability', 'duration_ms',
@@ -140,6 +140,7 @@ const AttributeSetting = props => {
 //TODO: tooltips for loudness, duration, key(?)
 export default function FilterBar(props) {
    const attrPerRow = 4;
+   const [open, setOpen] = useState(false);
    let attrGrid = [];
 
    for (let i = 0; i < attributes.length; i += attrPerRow) {
@@ -155,7 +156,10 @@ export default function FilterBar(props) {
 
    return (
       <div>
-         {attrGrid}
+         <Button onClick={() => setOpen(!open)}>Filters</Button>
+         <Collapse in={open}>
+            <div>{attrGrid}</div>
+         </Collapse>
       </div>
    )
 }
