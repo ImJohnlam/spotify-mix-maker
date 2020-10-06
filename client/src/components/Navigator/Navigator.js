@@ -8,16 +8,16 @@ import { getMe } from '../../api'
 import './Navigator.css';
 import { useHistory } from 'react-router-dom';
 
-// NOTE: temp hack, rm later
-const baseURL = process.env.NODE_ENV === 'production' ?
- process.env.REACT_APP_API_URL :
- "http://localhost:3000/";
-
 export default function Navigator(props) {
    const [user, setUser] = useState("");
    const [searchInput, setSearchInput] = useState("");
 
    const history = useHistory();
+
+   // NOTE: temp hack, rm later
+   const baseURL = process.env.NODE_ENV === 'production' ?
+    process.env.REACT_APP_API_URL :
+    "http://localhost:3000/";
 
    // TODO: fix refresh
 
