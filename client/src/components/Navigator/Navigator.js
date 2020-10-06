@@ -45,6 +45,11 @@ export default function Navigator(props) {
       window.scrollTo(0, 0);
    }
 
+   let login = () => {
+      console.log(`logging in, assigning to ${baseURL}login`)
+      window.location.assign(`${baseURL}login`)
+   }
+
    // NOTE: don't use query param in refresh/login
 
    return (
@@ -69,9 +74,13 @@ export default function Navigator(props) {
             <FormControl placeholder='search track' onChange={ev => setSearchInput(ev.target.value)}></FormControl>
             <Button onClick={search}>search</Button>
          </Form>
-         <Button onClick={() => window.location.assign(`${baseURL}login`)}>login to access playlists</Button>
-         <Button onClick={() => window.location.assign(`${baseURL}refresh?${queryString.stringify({refresh_token: Cookies.get('refresh_token')})}`)}>refresh token</Button>
-         {user && <p>logged in as {user}</p>}
+         {/* <Button onClick={() => window.location.assign(`${baseURL}refresh?${queryString.stringify({refresh_token: Cookies.get('refresh_token')})}`)}>refresh token</Button> */}
+         
+         {user ? 
+         <p>logged in as {user}</p>
+         :
+         <Button onClick={login}>login to access playlists</Button>
+         }
       </Navbar>
    )
 }
