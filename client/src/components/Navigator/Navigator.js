@@ -19,7 +19,7 @@ export default function Navigator(props) {
     process.env.REACT_APP_API_URL :
     "http://localhost:3000/";
 
-   console.log(`in Navigator, process.env=${process.env}`)
+   console.log(`in Navigator, process.env=${JSON.stringify(process.env)}, baseURL=${baseURL}`)
 
    // TODO: fix refresh
 
