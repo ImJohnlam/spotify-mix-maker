@@ -10,7 +10,7 @@ import queryString from 'query-string';
 import Cookies from 'js-cookie'
 
 function App(props) {
-   console.log(`process=env=${JSON.stringify(process.env)}`)
+   console.log(`in App.js, process=env=${JSON.stringify(process.env)}`)
    // const [items, setItems] = useState([])
    // const [creds, setCreds] = useState({
    //    search: "",
