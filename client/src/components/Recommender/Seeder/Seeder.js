@@ -92,7 +92,7 @@ export default function Seeder(props) {
       ev.preventDefault()
 
       if (ev.target.name === 'seedType') {
-         setSearchInput('')
+         // setSearchInput('')
          setSearchRes([])
          setSeedType(ev.target.value)
          if (ev.target.value === 'genre')
@@ -184,7 +184,7 @@ export default function Seeder(props) {
                </FormControl>
                <FormControl placeholder="search seed" onChange={handleChange} value={searchInput}/>
             </FormGroup>
-            <Button onClick={submit} disabled={seedType === 'none'}>Search seed</Button>
+            <Button onClick={submit} disabled={seedType === 'none' || !searchInput}>Search seed</Button>
          </Form>
          {mapSearchRes()}
       </div>

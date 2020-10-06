@@ -120,7 +120,7 @@ export default function PlaylistTrack(props) {
             <Button disabled={!nextPageQuery} onClick={nextPage}>NEXT PAGE</Button>
          </div>
       
-         <Card>
+         <Card className='border border-secondary'>
             {user ? <b>{user}'s Playlists:</b> : ""}
             <div>Selected playlist: {curPlaylist || 'none'}</div>   
             {curPlaylistID ?
@@ -129,14 +129,21 @@ export default function PlaylistTrack(props) {
             </div>
             :
             <div>
-               Showing {user}'s playlists:
-               
                <FormControl placeholder="new playlist name" onChange={ev => setNewPlaylistName(ev.target.value)}/>                  
                <Button onClick={() => handleCreatePlaylist(newPlaylistName)}>create playlist</Button>
+               <div>Showing {user}'s playlists:</div>
             </div>
             }
+         </Card>
+         
+         {items.length
+         ?
+         <Card className='border border-secondary' style={{'marginTop':'10px'}}>
             {items}
          </Card>
+         :
+         ""
+         }
          
       </div>
    )

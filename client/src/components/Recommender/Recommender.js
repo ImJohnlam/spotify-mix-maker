@@ -12,16 +12,17 @@ export default function Recommender(props) {
          <h2>Usage:</h2>
          <div className='border border-secondary'>
             <ol>
-               <div>Recommendations:</div>
+               <div><b>Recommendations:</b></div>
                <li>Select a seed type</li>
                <li>Select up to 5 seeds</li>
                   <div>Seeds are artists, tracks, or genres that the recommendation will be based on</div>
                <li>Click on image of the search result to add seed</li>
                <li>(Optional) Filter recommendations by song characteristics</li>
+                  <div>"min" and "max" allows you define a hard range, "target" allows you to favor a certain value of a characteristic</div>
                <li>(Repeatable) Click on "Get Recommendations" to get related tracks</li>
             </ol>
             <ol>
-               <div>Playlist Editor:</div>
+               <div><b>Playlist Editor:</b></div>
                <li>Log in if you have not already</li>
                <li>Select or create a new playlist</li>
                <li>Add tracks to the selected playlist by clicking on the track images in the recommendations column</li>
