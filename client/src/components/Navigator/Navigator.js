@@ -3,9 +3,15 @@ import {Navbar, Button, Nav, Form, FormControl} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import queryString from 'query-string';
 import Cookies from 'js-cookie'
-import { baseURL, getMe } from '../../api'
+// import { baseURL, getMe } from '../../api'
+import { getMe } from '../../api'
 import './Navigator.css';
 import { useHistory } from 'react-router-dom';
+
+// NOTE: temp hack, rm later
+const baseURL = process.env.NODE_ENV === 'production' ?
+ process.env.REACT_APP_API_URL :
+ "http://localhost:3000/";
 
 export default function Navigator(props) {
    const [user, setUser] = useState("");
@@ -72,7 +78,7 @@ export default function Navigator(props) {
          </Navbar.Collapse>
          <Form inline onSubmit={search}>
             <FormControl placeholder='search track' onChange={ev => setSearchInput(ev.target.value)}></FormControl>
-            <Button onClick={search}>search</Button>
+            <Button onClick={search} id='search-button'>search</Button>
          </Form>
          {/* <Button onClick={() => window.location.assign(`${baseURL}refresh?${queryString.stringify({refresh_token: Cookies.get('refresh_token')})}`)}>refresh token</Button> */}
          
