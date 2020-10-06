@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {Form, FormGroup, FormControl, Button, Card } from 'react-bootstrap';
+import {Form, FormGroup, FormControl, Button, Card, Row, Col } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { getTrack, search } from '../../api'
 import { PlayerContext } from '../contexts'
@@ -8,23 +8,47 @@ import { SimpleTrack }  from '../components'
 
 const TrackDetails = (props) => {
    let [id, setId] = useContext(PlayerContext)
-   console.log(`track=${JSON.stringify(props.track, null, 2)}`);
+   console.log(`data=${JSON.stringify(props.data, null, 2)}`);
 
-   const track = props.track
+   const data = props.data
+
+   let openInSpotify = () => window.open(data.external_urls.spotify)
 
    return (
-      <Card>
-         <img src={track.imgSrc} width='200' height='200'/>
+      <Card style={{display:'block', margin:'10px 10px 10px 10px'}}>
+         <img src={data.imgSrc} width='200' height='200'/>
          <Card.Body>
-            {track.name} by: {track.artists.map(artist => artist.name).join(', ')} id={track.id}
-            <ul>
-               <li>key = {track.classical}</li>
-               <li>camelot = {track.camelot}</li>
-               <li>duration = {track.duration_min}</li>
-               <li>bpm = {track.bpm}</li>
-            </ul>
-            <Button onClick={() => setId(track.id)}>Play</Button>
-            <Button onClick={() => window.open(track.external_urls.spotify)}>Spotify</Button>
+            <span style={{'fontSize':'large'}}>
+               <b>{data.name}</b>{` by: ${data.artists.map(artist => artist.name).join(', ')}`}
+            </span>
+            <Row>
+               <Col>
+                  <ul>
+                     <li>Key = {data.classical}</li>
+                     <li>Camelot = {data.camelot}</li>
+                     <li>Duration = {data.duration_min}</li>
+                     <li>BPM = {data.bpm}</li>
+                  </ul>
+               </Col>
+               <Col>
+                  <ul>
+                     <li>Danceability = {data.danceability}</li>
+                     <li>Energy = {data.energy}</li>
+                     <li>Loudness = {data.loudness}</li>
+                     <li>Speechiness = {data.speechiness}</li>
+                     <li>Acousticness = {data.acousticness}</li>
+                     <li>Instrumentalness = {data.instrumentalness}</li>
+                     <li>Liveness = {data.liveness}</li>
+                     <li>Happiness = {data.valence}</li>
+                  </ul>
+               </Col>
+            </Row>
+            
+            <div>
+               <Button className='fa fa-play res-button' onClick={() => setId(data.id)}>      Play</Button>
+               {/* <Button className='fa fa-info res-button' onClick={goToDetails}>      Details</Button> */}
+               <Button className='fa fa-spotify res-button' onClick={openInSpotify}>      Spotify</Button>
+            </div>
          </Card.Body>
       </Card>
    )
@@ -45,7 +69,7 @@ export default function Details(props) {
       console.log(`details pathname: ${window.location.pathname} id='${id}'`)
       if (id !== path) {
          getTrack(id, detailedTrack => {
-            setTrack(<TrackDetails track={detailedTrack}></TrackDetails>)
+            setTrack(<TrackDetails data={detailedTrack}></TrackDetails>)
          })
       }
    }, [window.location.pathname])
@@ -84,14 +108,19 @@ export default function Details(props) {
 
    return (
       <section className='container'>
-         <h1> DETAILS </h1>
-         {Object.keys(track).length && track !== {} ? track : <span className='fa fa-album'/>}
+         <h1> Track Details </h1>
+         <h2>Usage:</h2>
+         <ol className='border border-secondary'>
+            <li>Search for a track</li>
+            <li>Click on image of the search result to view details</li>
+         </ol>
+         {Object.keys(track).length && track !== {} ? track : ""}
          {/* <Button onClick={() => history.push(`/${path}/4Oun2ylbjFKMPTiaSbbCih`)}>TEST GO TO PATH</Button> */}
          <Form onSubmit={submit}>
             <FormGroup>
                <FormControl placeholder="search track" onChange={handleChange}/>
             </FormGroup>
-            <Button onClick={submit}>Search</Button>
+            <Button onClick={submit}>SEARCH</Button>
          </Form>
          {searchRes}
       </section>

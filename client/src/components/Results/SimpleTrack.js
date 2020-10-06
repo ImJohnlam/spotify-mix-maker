@@ -2,6 +2,7 @@ import React, {useEffect, useContext } from 'react';
 import { Button, Card, ListGroup } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import {PlayerContext} from '../contexts'
+import './SimpleTrack.css'
 
 export default props => {
    let [id, setId] = useContext(PlayerContext)
@@ -19,21 +20,21 @@ export default props => {
    // TODO: rm onCardClick
    // NOTE: consider Nav/tabs for more track details
    return (
-      <div>
-         <Card style={{cursor: 'pointer', display:'block'}} onClick={
-          data.onCardClick ? () => {console.log(`calling cardclick data=${JSON.stringify(data)}`); data.onCardClick(data);} : goToDetails}>
-            <img src={data.imgSrc} width='200' height='200'/>
-            {/* <span style={{float:'right'}}> */}
-            <span>
-               <b>{data.name}</b> by: {data.artists.map(artist => artist.name).join(', ')} id={data.id}
-            </span>
-            <div>
-               <Button className='fa fa-play' onClick={() => setId(data.id)}>      Play</Button>
-               <Button className='fa fa-info' onClick={goToDetails}>      Details</Button>
-               <Button className='fa fa-spotify' onClick={openInSpotify}>      Spotify</Button>
-            </div>
-         </Card>
-         
-      </div>
+      <Card style={{display:'block', margin:'10px 10px 10px 10px'}}>
+         <img
+            src={data.imgSrc}
+            width='200' height='200'
+            style={{cursor: 'pointer'}}
+            onClick={data.onCardClick ? () => {console.log(`calling cardclick data=${JSON.stringify(data)}`); data.onCardClick(data);} : goToDetails}
+            />
+         <span style={{'fontSize':'large'}}>
+            <b>{data.name}</b>{` by: ${data.artists.map(artist => artist.name).join(', ')}`}
+         </span>
+         <div>
+            <Button className='fa fa-play res-button' onClick={() => setId(data.id)}>      Play</Button>
+            <Button className='fa fa-info res-button' onClick={goToDetails}>      Details</Button>
+            <Button className='fa fa-spotify res-button' onClick={openInSpotify}>      Spotify</Button>
+         </div>
+      </Card>
    )
 }

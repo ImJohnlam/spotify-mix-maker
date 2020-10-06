@@ -8,8 +8,27 @@ export default function Recommender(props) {
 
    return (
       <section className='container'>
-         <h1>--Recommender--</h1>
-         <p>instructions here</p>
+         <h1>Track Recommendation System and Playlist Editor</h1>
+         <h2>Usage:</h2>
+         <div className='border border-secondary'>
+            <ol>
+               <div>Recommendations:</div>
+               <li>Select a seed type</li>
+               <li>Select up to 5 seeds</li>
+                  <div>Seeds are artists, tracks, or genres that the recommendation will be based on</div>
+               <li>Click on image of the search result to add seed</li>
+               <li>(Optional) Filter recommendations by song characteristics</li>
+               <li>(Repeatable) Click on "Get Recommendations" to get related tracks</li>
+            </ol>
+            <ol>
+               <div>Playlist Editor:</div>
+               <li>Log in if you have not already</li>
+               <li>Select or create a new playlist</li>
+               <li>Add tracks to the selected playlist by clicking on the track images in the recommendations column</li>
+               <li>Delete tracks from the selected playlist by clicking on the track images in the playlist editor column</li>
+            </ol>
+         </div>
+         
          <RecommenderContextProvider>
             <FilterBar/>
             <Row>

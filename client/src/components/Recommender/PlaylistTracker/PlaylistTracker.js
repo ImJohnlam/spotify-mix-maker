@@ -3,13 +3,15 @@ import {Form, FormGroup, FormControl, Row, Col, Button, Card} from 'react-bootst
 import { RecommenderContext } from '../../contexts'
 import queryString from 'query-string';
 import Cookies from 'js-cookie'
-import { createPlaylist, getUserPlaylists, getPlaylistItems, deleteTrackFromPlaylist } from '../../../api'
+import { getMe, createPlaylist, getUserPlaylists, getPlaylistItems, deleteTrackFromPlaylist } from '../../../api'
 import { SimpleTrack, SimplePlaylist }  from '../../components'
 
 
 export default function PlaylistTrack(props) {
    const [seeds, setSeeds, calcNumSeeds, filters, setFilters, curPlaylistID,
     setCurPlaylistID, playlistUpdate, setPlaylistUpdate] = useContext(RecommenderContext)
+   const [user, setUser] = useState("");
+   const [newPlaylistName, setNewPlaylistName] = useState("");
    const [items, setItems] = useState([])
    const [curPlaylist, setCurPlaylist] = useState(null)
 
@@ -57,6 +59,7 @@ export default function PlaylistTrack(props) {
       }
 
       console.log('useEffect called')
+      getMe(me => setUser(me.display_name))
       if (curPlaylistID) {
          console.log('fetch playlist tracks')
 
@@ -111,25 +114,26 @@ export default function PlaylistTrack(props) {
 
    return (
       <div>
-         <h1 onClick={() => console.log(`playlistID=${curPlaylistID}, items=${items}, curPlaylist=${JSON.stringify(curPlaylist)} prevPageQuery=${prevPageQuery}, nextPageQuery=${nextPageQuery}`)}>PLAYLIST TRACKER</h1>
+         <h1 onClick={() => console.log(`playlistID=${curPlaylistID}, items=${items}, curPlaylist=${JSON.stringify(curPlaylist)} prevPageQuery=${prevPageQuery}, nextPageQuery=${nextPageQuery}`)}>Playlist Editor</h1>
          <div>
             <Button disabled={!prevPageQuery} onClick={prevPage}>PREV PAGE</Button>
             <Button disabled={!nextPageQuery} onClick={nextPage}>NEXT PAGE</Button>
          </div>
       
          <Card>
-            <div>current playlist: {curPlaylist || 'none'}</div>   
+            {user ? <b>{user}'s Playlists:</b> : ""}
+            <div>Selected playlist: {curPlaylist || 'none'}</div>   
             {curPlaylistID ?
             <div>
-               showing playlist tracks
-               {curPlaylistID}
+               Showing tracks for this playlist:
             </div>
             :
             <div>
-               showing all user playlists
-               <Button onClick={() => handleCreatePlaylist('asdf')}>create playlist</Button>
+               Showing {user}'s playlists:
+               
+               <FormControl placeholder="new playlist name" onChange={ev => setNewPlaylistName(ev.target.value)}/>                  
+               <Button onClick={() => handleCreatePlaylist(newPlaylistName)}>create playlist</Button>
             </div>
-            
             }
             {items}
          </Card>

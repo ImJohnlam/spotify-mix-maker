@@ -44,9 +44,9 @@ export default function RecResults(props) {
    // TODO: sort
    return (
       <div>
-         <h1 onClick={() => {console.log(JSON.stringify(recs, null, 2)); console.log(`# recomends = ${recs.length}`)}}>RECOMMENDED TRACKS</h1>
-         <Button onClick={() => addTrackToPlaylist('7hudEXa3coGjanstJBgtMf', '?uris=spotify:track:3xaugmCyXrVkrDTXbFkMW3', data => console.log(JSON.stringify(data, null, 2)))}>TEST ADD TRACK TO PLAYLIST</Button>
-         <Button onClick={submit} disabled={!calcNumSeeds()}>Get Reccommendations</Button>
+         <h1 onClick={() => {console.log(JSON.stringify(recs, null, 2)); console.log(`# recomends = ${recs.length}`)}}>Recommendations</h1>
+         {/* <Button onClick={() => addTrackToPlaylist('7hudEXa3coGjanstJBgtMf', '?uris=spotify:track:3xaugmCyXrVkrDTXbFkMW3', data => console.log(JSON.stringify(data, null, 2)))}>TEST ADD TRACK TO PLAYLIST</Button> */}
+         <Button onClick={submit} disabled={!calcNumSeeds()}>Get Recommendations</Button>
          {mapReccomendations()}
 
 

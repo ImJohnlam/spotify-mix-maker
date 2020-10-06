@@ -27,17 +27,24 @@ export default function Home(props) {
 
    return (
       <section className='container'>
-         <h1>HOME PAGE WELCOME</h1>
-         <h1>INFO HERE</h1>
-         <Button onClick={() => history.push('/details')}>details</Button>
-         <Button onClick={() => history.push('/recommender')}>recommender</Button>
-         <h1>POPULAR TRACKS RN</h1>
+         <h1 style={{position:'relative', 'textAlign':'center'}}>Spotify Mix Maker</h1>
+         <h2>Features:</h2>
+         <ul className='border border-secondary'>
+            <li>Embedded Spotify player</li>
+            <li>View detailed track characteristics</li>
+            <li>Recommendation system with filters and seeds</li>
+            <li>Create, edit, view playlists and add recommendations to playlists (login required)</li>
+         </ul>
+         {/* <Button onClick={() => console.log(JSON.stringify(tracks[0]))}>test</Button>
+         
+         <Button onClick={() => history.push('/recommender')}>recommender</Button> */}
+         <h1>Top Charts:</h1>
          <FormControl as='select' onChange={handleChange} value={curPlaylistID}>
             <option value='ustop50'>US TOP 50</option>
             <option value='globaltop50'>GLOBAL TOP 50</option>
          </FormControl>
          {tracks.length ? 
-         <div className='border border-primary'>
+         <div className='border border-primary' style={{margin:'10px'}}>
             {tracks}
          </div>
          :

@@ -74,14 +74,14 @@ export default function Navigator(props) {
          </Navbar.Collapse>
          <Form inline onSubmit={search}>
             <FormControl placeholder='search track' onChange={ev => setSearchInput(ev.target.value)}></FormControl>
-            <Button onClick={search} id='search-button'>search</Button>
+            <Button onClick={search} id='search-button'>SEARCH</Button>
          </Form>
          {/* <Button onClick={() => window.location.assign(`${baseURL}refresh?${queryString.stringify({refresh_token: Cookies.get('refresh_token')})}`)}>refresh token</Button> */}
          
          {user ? 
-         <p>logged in as {user}</p>
+         <b>Hello, {user}</b>
          :
-         <Button onClick={login}>login to access playlists</Button>
+         <Button onClick={login}>LOGIN</Button>
          }
       </Navbar>
    )

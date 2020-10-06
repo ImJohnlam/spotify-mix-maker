@@ -32,7 +32,7 @@ const SeedSelectedItem = props => {
 }
 
 export default function Seeder(props) {
-   const [seedType, setSeedType] = useState('track')
+   const [seedType, setSeedType] = useState('none')
    const [searchInput, setSearchInput] = useState('')
    const [searchRes, setSearchRes] = useState([])
    const [selectedSeedObjs, setSelectedSeedsObjs] = useState([])
@@ -110,7 +110,7 @@ export default function Seeder(props) {
 
       ev.preventDefault()
 
-      if (searchInput) {
+      if (searchInput && seedType !== 'none') {
          search(query, data => {
             let seedItems;
 
@@ -162,14 +162,14 @@ export default function Seeder(props) {
 
    return (
       <div>
-         <h1 onClick={() => console.log(`seedType=${seedType}, searchInput=${searchInput}`)}>SEEDER</h1>
+         <h1 onClick={() => console.log(`seedType=${seedType}, searchInput=${searchInput}`)}>Seeds</h1>
          <Card>
-            <Row>
+            {/* <Row>
                <Col onClick={() => console.log(searchRes[0])}>test1</Col>
                <Col onClick={() => console.log(JSON.stringify(seeds, null, 2))}>test2</Col>
                <Col onClick={() => addSeed({id: 1})}>test3</Col>
                <Col onClick={() => console.log(JSON.stringify(selectedSeedObjs, null, 2))}>test2</Col>
-            </Row>
+            </Row> */}
             <Row>
                {mapSelectedSeeds()}
             </Row>
@@ -177,13 +177,14 @@ export default function Seeder(props) {
          <Form onSubmit={submit}>
             <FormGroup>
                <FormControl name='seedType' as='select' onChange={handleChange} value={seedType}>
+                  <option value='none'>Select a seed type...</option>
                   <option value='track'>Track</option>
                   <option value='artist'>Artist</option>
                   <option value='genre'>Genre</option>
                </FormControl>
                <FormControl placeholder="search seed" onChange={handleChange} value={searchInput}/>
             </FormGroup>
-            <Button onClick={submit}>Search seed</Button>
+            <Button onClick={submit} disabled={seedType === 'none'}>Search seed</Button>
          </Form>
          {mapSearchRes()}
       </div>

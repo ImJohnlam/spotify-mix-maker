@@ -1,5 +1,5 @@
 import React, {useEffect, useState, Component, useContext} from 'react';
-import {Form, FormGroup, FormControl, Row, Col, Button, Card, Collapse} from 'react-bootstrap';
+import {Form, FormGroup, FormControl, Row, Col, Button, Card, Collapse, Container} from 'react-bootstrap';
 import { RecommenderContext } from '../../contexts'
 
 const attributes = ['acousticness', 'tempo', 'danceability', 'duration_ms',
@@ -70,6 +70,7 @@ const AttributeSetting = props => {
 
    if (props.attr === 'key')
       controls = (
+         <section className='container'>
          <Row>
             <Col>
                <Form.Control name='target_key' as='select' onChange={handleChange} value={localFilters.target_key || ''}>
@@ -100,39 +101,43 @@ const AttributeSetting = props => {
                <Button onClick={resetFilters}>reset</Button>
             </Col>
          </Row>
-         
-
+         </section>
       )
    else {
       controls = (
-         <Row>
-            <Col>
+         <section className='container'>
+         <Row style={{margin:'10px 10px 10px 10px'}}>
+               <Row>
                <Form.Control name={`target_${props.attr}`} placeholder='target' 
-               onChange={handleChange} value={localFilters[`target_${props.attr}`] || ''}></Form.Control>
-            </Col>
-            <Col>
+               onChange={handleChange} value={localFilters[`target_${props.attr}`] || ''}/>
+               </Row>
+            
+               <Row>
                <Form.Control name={`min_${props.attr}`} placeholder='min' 
-               onChange={handleChange} value={localFilters[`min_${props.attr}`] || ''}></Form.Control>
-            </Col>
-            <Col>
+               onChange={handleChange} value={localFilters[`min_${props.attr}`] || ''}/>
+               </Row>
+         
+               <Row>
                <Form.Control name={`max_${props.attr}`} placeholder='max' 
-               onChange={handleChange} value={localFilters[`max_${props.attr}`] || ''}></Form.Control>
-            </Col>
-            <Col>
+               onChange={handleChange} value={localFilters[`max_${props.attr}`] || ''}/>
+               </Row>
+
+            <div>
                <Button onClick={applyFilters}>apply</Button>
                <Button onClick={resetFilters}>reset</Button>
-            </Col>
+               </div>
          </Row>
+         </section>
       )
    }
 
    return (
-      <Card border={borderState}>
+      <Card border={borderState} style={{margin:'10px 10px 10px 10px'}}>
          <Card.Body onClick={() => console.log(JSON.stringify(filters, null, 2))}>{friendlyName}</Card.Body>
          <Form>
             {controls}
          </Form>
-         <div onClick={() => console.log(JSON.stringify(seeds, null, 2))}>TEST</div>
+         {/* <div onClick={() => console.log(JSON.stringify(seeds, null, 2))}>TEST</div> */}
       </Card>
    )
 }

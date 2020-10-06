@@ -68,8 +68,8 @@ function App(props) {
    return (
       <div>
          <Navigator/>
-         <p>document.cookie={document.cookie}</p>
-         <p>time remaining={(parseInt(Cookies.get('expiry_date')) - Date.now()) / 1000}</p>
+         {/* <p>document.cookie={document.cookie}</p>
+         <p>time remaining={(parseInt(Cookies.get('expiry_date')) - Date.now()) / 1000}</p> */}
          
          <PlayerContextProvider>
             <Switch>
@@ -83,7 +83,7 @@ function App(props) {
             <Player/>   
          </PlayerContextProvider>
          
-         <h1>FOOTER HERE</h1>
+         {/* <p>end</p> */}
          {/* <Button onClick={() => window.history.replaceState({}, document.title, '/test')}>test button</Button>
          <Button onClick={() => window.location.reload()}>refresh page</Button>
          <Navigator></Navigator>
