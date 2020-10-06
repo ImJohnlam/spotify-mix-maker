@@ -4,7 +4,6 @@ import {LinkContainer} from 'react-router-bootstrap';
 import queryString from 'query-string';
 import Cookies from 'js-cookie'
 import { baseURL, getMe } from '../../api'
-import { getMe } from '../../api'
 import './Navigator.css';
 import { useHistory } from 'react-router-dom';
 
