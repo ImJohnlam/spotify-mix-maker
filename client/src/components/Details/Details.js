@@ -85,8 +85,8 @@ export default function Details(props) {
    return (
       <section className='container'>
          <h1> DETAILS </h1>
-         {Object.keys(track).length && track !== {} ? track : <p>NO TRACK</p>}
-         <Button onClick={() => history.push(`/${path}/4Oun2ylbjFKMPTiaSbbCih`)}>TEST GO TO PATH</Button>
+         {Object.keys(track).length && track !== {} ? track : <span className='fa fa-album'/>}
+         {/* <Button onClick={() => history.push(`/${path}/4Oun2ylbjFKMPTiaSbbCih`)}>TEST GO TO PATH</Button> */}
          <Form onSubmit={submit}>
             <FormGroup>
                <FormControl placeholder="search track" onChange={handleChange}/>

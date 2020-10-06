@@ -15,9 +15,9 @@ const creds = require('./creds.json');
 
 const PORT = process.env.PORT || 3000
 
-const clientURL = process.env.clientURL || 'http://localhost:3001';
+const clientURL = process.env.CLIENT_URL || 'http://localhost:3001';
 
-const redirectURI = process.env.redirectURI || 'http://localhost:3000/callback';
+const redirectURI = process.env.REDIRECT_URL || 'http://localhost:3000/callback';
 const stateKey = 'spotify_auth_state';
 
 const apiReqConf = {}
@@ -57,7 +57,7 @@ app.use((req, res, next) => {
    console.log(`cookies: ${JSON.stringify(req.cookies)}\n`)
    console.log(`access_token=${req.cookies.access_token}\n`)
    req.cookies.access_token && console.log(`decrpyted access_token=${cryptoJS.AES.decrypt(req.cookies.access_token, creds.secret_key).toString(cryptoJS.enc.Utf8)}\n`)
-   
+   console.log(`process.env=${JSON.stringify(process.env)}`)
    next()
 })
 

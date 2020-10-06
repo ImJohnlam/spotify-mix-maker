@@ -3,7 +3,7 @@ import {Navbar, Button, Nav, Form, FormControl} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import queryString from 'query-string';
 import Cookies from 'js-cookie'
-// import { baseURL, getMe } from '../../api'
+import { baseURL, getMe } from '../../api'
 import { getMe } from '../../api'
 import './Navigator.css';
 import { useHistory } from 'react-router-dom';
@@ -13,11 +13,6 @@ export default function Navigator(props) {
    const [searchInput, setSearchInput] = useState("");
 
    const history = useHistory();
-
-   // NOTE: temp hack, rm later
-   const baseURL = process.env.NODE_ENV === 'production' ?
-    process.env.REACT_APP_API_URL :
-    "http://localhost:3000/";
 
    console.log(`in Navigator, process.env=${JSON.stringify(process.env)}, baseURL=${baseURL}`)
 
