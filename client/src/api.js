@@ -15,6 +15,7 @@ const reqConf = {
 // NOTE: if refresh token expire, refresh mb?
 function chkFetch(url, options) {
    console.log(`fetching ${url}`)
+   console.log()
    return fetch(url, options);
 }
 
