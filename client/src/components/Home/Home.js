@@ -11,7 +11,8 @@ export default function Home(props) {
 
    const topChartsMap = {
       'ustop50': '37i9dQZEVXbLRQDuF5jeBp',
-      'globaltop50': '37i9dQZEVXbMDoHDwVN2tF'
+      'globaltop50': '37i9dQZEVXbMDoHDwVN2tF',
+      'globalviral50': '37i9dQZEVXbLiRSasKsNU9'
    }
 
    useEffect(() => { 
@@ -27,7 +28,7 @@ export default function Home(props) {
 
    return (
       <section className='container'>
-         <h1 style={{position:'relative', 'textAlign':'center'}}>Spotify Mix Maker</h1>
+         <h1 style={{'textAlign':'center'}}>Spotify Mix Maker</h1>
          <h2>Features:</h2>
          <ul className='border border-secondary'>
             <li>Embedded Spotify player</li>
@@ -42,6 +43,7 @@ export default function Home(props) {
          <FormControl as='select' onChange={handleChange} value={curPlaylistID}>
             <option value='ustop50'>US TOP 50</option>
             <option value='globaltop50'>GLOBAL TOP 50</option>
+            <option value='globalviral50'>GLOBAL VIRAL 50</option>
          </FormControl>
          {tracks.length ? 
          <div className='border border-primary' style={{margin:'10px'}}>
