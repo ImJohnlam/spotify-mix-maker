@@ -65,10 +65,6 @@ function App(props) {
    //       console.log("called search")
    //    })
    // }
-   let test = () => {
-      console.log("hello")
-      get('public/search?q=lowkey&type=track')
-   }
 
    return (
       <div>
