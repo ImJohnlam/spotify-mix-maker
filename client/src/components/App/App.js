@@ -68,7 +68,6 @@ function App(props) {
 
    return (
       <div>
-         <Button onClick={test}>test</Button>
          <Navigator/>
          {/* <p>document.cookie={document.cookie}</p>
          <p>time remaining={(parseInt(Cookies.get('expiry_date')) - Date.now()) / 1000}</p> */}
