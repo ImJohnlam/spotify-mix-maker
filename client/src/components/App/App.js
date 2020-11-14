@@ -8,6 +8,7 @@ import { Home, Recommender, Details, Player }  from '../components'
 import { PlayerContext, PlayerContextProvider } from '../contexts'
 import queryString from 'query-string';
 import Cookies from 'js-cookie'
+import {get} from '../../api'
 
 function App(props) {
    console.log(`in App.js, process=env=${JSON.stringify(process.env)}`)
@@ -64,9 +65,14 @@ function App(props) {
    //       console.log("called search")
    //    })
    // }
+   let test = () => {
+      console.log("hello")
+      get('public/search?q=lowkey&type=track')
+   }
 
    return (
       <div>
+         <Button onClick={test}>test</Button>
          <Navigator/>
          {/* <p>document.cookie={document.cookie}</p>
          <p>time remaining={(parseInt(Cookies.get('expiry_date')) - Date.now()) / 1000}</p> */}

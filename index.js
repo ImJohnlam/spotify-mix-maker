@@ -1,17 +1,19 @@
 const express = require('express');
 const request = require('request');
-const fetch = require('node-fetch')
+const fetch = require('node-fetch');
+const dotenv = require('dotenv').config();
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const querystring = require('querystring');
 const crypto = require('crypto');
 const cryptoJS = require('crypto-js');
-const url = require('url');
 
 const app = express();
 
-const creds = require('./creds.json');
+const clientID = process.env.CLIENT_ID;
+const clientSecret = process.env.CLIENT_SECRET;
+const secretKey = process.env.SECRET_KEY;
 
 const PORT = process.env.PORT || 3000
 
@@ -19,12 +21,6 @@ const clientURL = process.env.CLIENT_URL || 'http://localhost:3001';
 
 const redirectURI = process.env.REDIRECT_URL || 'http://localhost:3000/callback';
 const stateKey = 'spotify_auth_state';
-
-const apiReqConf = {}
-const apiURL = ''
-
-const authReqConf = {}
-const authURL = ''
 
 let wrapAsync = fn => (req, res, next) => fn(req, res, next).catch(err => {console.log(err); res.send(err)})
 
@@ -52,11 +48,13 @@ app.options("/*", function(req, res) {
    res.status(200).end();
 });
 
+app.use('/public', require('./routes/public.js'));
+
 //debug
 app.use((req, res, next) => {
    console.log(`cookies: ${JSON.stringify(req.cookies)}\n`)
    console.log(`access_token=${req.cookies.access_token}\n`)
-   req.cookies.access_token && console.log(`decrpyted access_token=${cryptoJS.AES.decrypt(req.cookies.access_token, creds.secret_key).toString(cryptoJS.enc.Utf8)}\n`)
+   req.cookies.access_token && console.log(`decrpyted access_token=${cryptoJS.AES.decrypt(req.cookies.access_token, secretKey).toString(cryptoJS.enc.Utf8)}\n`)
    console.log(`process.env=${JSON.stringify(process.env)}`)
    next()
 })
@@ -64,13 +62,13 @@ app.use((req, res, next) => {
 // decrypt tokens
 app.use((req, res, next) => {
    if (req.path === '/me' || req.path === '/userplaylists' || (req.path.includes('/playlist') && req.method !== 'GET'))
-      req.accessToken = cryptoJS.AES.decrypt(req.cookies.access_token, creds.secret_key).toString(cryptoJS.enc.Utf8)
-      // req.accessToken = cryptoJS.AES.decrypt(req.query.access_token, creds.secret_key).toString(cryptoJS.enc.Utf8);
+      req.accessToken = cryptoJS.AES.decrypt(req.cookies.access_token, secretKey).toString(cryptoJS.enc.Utf8)
+      // req.accessToken = cryptoJS.AES.decrypt(req.query.access_token, secretKey).toString(cryptoJS.enc.Utf8);
    else if (req.path === '/refresh'){
       console.log(req.query)
       console.log(`cookies=${JSON.stringify(req.cookies)}`)
       console.log(`req.query.refresh_token=${req.query.refresh_token}`)
-      req.refreshToken = cryptoJS.AES.decrypt(req.cookies.refresh_token, creds.secret_key).toString(cryptoJS.enc.Utf8);
+      req.refreshToken = cryptoJS.AES.decrypt(req.cookies.refresh_token, secretKey).toString(cryptoJS.enc.Utf8);
    }
 
    next()
@@ -88,7 +86,7 @@ app.use((req, res, next) => {
             grant_type: 'client_credentials'
          },
          headers: {
-            Authorization: 'Basic ' + (new Buffer(creds.client_id + ':' + creds.client_secret).toString('base64'))
+            Authorization: 'Basic ' + (new Buffer(clientID + ':' + clientSecret).toString('base64'))
          }
       };
 
@@ -116,9 +114,10 @@ let addImgSrc = (items, type) => {
    })
 }
 
+/* moved
 app.get('/search', (req, res) => {
    let options = {
-      url: 'https://api.spotify.com/v1/search' + url.parse(req.url, true).search,
+      url: `https://api.spotify.com/v1/search?${querystring.stringify(req.query)}`,
       headers: { Authorization: 'Bearer ' + req.accessToken },
       json: true
    };
@@ -137,9 +136,14 @@ app.get('/search', (req, res) => {
       addImgSrc(results, req.query.type);
       res.json(results)
       console.log(req.query)
+      console.log("done serach...")
+      // console.log(url.parse(req.url, true).search)
+      console.log(querystring.stringify(req.query))
    })
 })
+*/
 
+/* moved
 app.get('/genres', (req, res) => {
    let options = {
       url: 'https://api.spotify.com/v1/recommendations/available-genre-seeds',
@@ -153,6 +157,7 @@ app.get('/genres', (req, res) => {
       res.json(gBody.genres)
    })
 })
+*/
 
 app.get('/login', (req, res) => {
    const state = crypto.randomBytes(16).toString('hex');
@@ -161,7 +166,7 @@ app.get('/login', (req, res) => {
    res.cookie(stateKey, state, {maxAge: duration, httpOnly: true});
    res.redirect('https://accounts.spotify.com/authorize?' +
       querystring.stringify({
-         client_id: creds.client_id,
+         client_id: clientID,
          response_type: 'code',
          redirect_uri: redirectURI,
          state: state,
@@ -198,7 +203,7 @@ app.get('/callback', (req, res) => {
             redirect_uri: redirectURI
          },
          headers: {
-            Authorization: 'Basic ' + (new Buffer(creds.client_id + ':' + creds.client_secret).toString('base64'))
+            Authorization: 'Basic ' + (new Buffer(clientID + ':' + clientSecret).toString('base64'))
          },
          json: true
       };
@@ -211,8 +216,8 @@ app.get('/callback', (req, res) => {
             console.log(`2 accessing api, accessToken=${accessToken}\n`);
             
 
-            res.cookie('access_token', cryptoJS.AES.encrypt(accessToken, creds.secret_key).toString())
-            res.cookie('refresh_token', cryptoJS.AES.encrypt(refreshToken, creds.secret_key).toString())
+            res.cookie('access_token', cryptoJS.AES.encrypt(accessToken, secretKey).toString())
+            res.cookie('refresh_token', cryptoJS.AES.encrypt(refreshToken, secretKey).toString())
             res.cookie('expiry_date', parseInt(tokBody.expires_in * 1000) + Date.now())
 
          }
@@ -231,7 +236,7 @@ app.get('/refresh', (req, res) => {
    let options = {
       url: 'https://accounts.spotify.com/api/token',
       headers: {
-         Authorization: 'Basic ' + (new Buffer(creds.client_id + ':' + creds.client_secret).toString('base64'))
+         Authorization: 'Basic ' + (new Buffer(clientID + ':' + clientSecret).toString('base64'))
       },
       form: {
         grant_type: 'refresh_token',
@@ -246,7 +251,7 @@ app.get('/refresh', (req, res) => {
       else {
          console.log(`in refresh, body=${JSON.stringify(body, null, 2)}`)
          let accessToken = body.access_token;
-         res.cookie('access_token', cryptoJS.AES.encrypt(accessToken, creds.secret_key).toString())
+         res.cookie('access_token', cryptoJS.AES.encrypt(accessToken, secretKey).toString())
          res.cookie('expiry_date', parseInt(body.expires_in * 1000) + Date.now())
          console.log(`refreshed, accessToken=${accessToken}`)
          res.redirect(clientURL)
@@ -336,6 +341,7 @@ app.delete('/playlistitems/:playlistID', wrapAsync(async (req, res) => {
    res.send(delTrackRes)
 }))
 
+/* moved
 app.get('/playlistitems/:playlistID', wrapAsync(async (req, res) => {
    let query = querystring.stringify({
       ...req.query,
@@ -365,6 +371,7 @@ app.get('/playlistitems/:playlistID', wrapAsync(async (req, res) => {
    // })
    console.log('playlist item end')
 }))
+*/
 
 function addDetails(tracks) {
    tracks.forEach(track => {
@@ -384,7 +391,7 @@ function addDetails(tracks) {
 }
 
 //TODO: add imgSrc handler w/ stock img path
-
+/* moved
 app.get('/details/:id', async (req, res) => {
    const id = req.params.id;
    let trackOptions = {
@@ -410,7 +417,9 @@ app.get('/details/:id', async (req, res) => {
    })
 
 })
+*/
 
+/* moved
 app.get('/recommend', (req, res) => {
    console.log('in recommend handler')
    let query = querystring.stringify({...req.query});
@@ -419,11 +428,6 @@ app.get('/recommend', (req, res) => {
       headers: { Authorization: 'Bearer ' + req.accessToken },
       json: true
    }
-   
-
-   // NOTE: might need later?
-   // delete req.query.access_token;
-   
 
    request.get(options, (error, response, body) => {
       let tracks = body.tracks;
@@ -450,6 +454,8 @@ app.get('/recommend', (req, res) => {
       // make call to track features
    })
 })
+*/
+
 
 app.listen(PORT, () => {
    console.log(`listening on port ${PORT}`);

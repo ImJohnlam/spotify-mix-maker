@@ -13,13 +13,13 @@ const reqConf = {
 
 
 // NOTE: if refresh token expire, refresh mb?
-function chkFetch(url, options) {
+export function chkFetch(url, options) {
    console.log(`fetching ${url}`)
    console.log()
    return fetch(url, options);
 }
 
-function get(endpoint) {
+export function get(endpoint) {
    return chkFetch(baseURL + endpoint, {
       method: 'GET',
       ...reqConf
@@ -55,7 +55,7 @@ export function getUserPlaylists(query, cb) {
 }
 
 export function getPlaylistItems(id, query, cb) {
-   return get(`playlistitems/${id}${query ? '?' + query : ''}`)
+   return get(`public/playlistitems/${id}${query ? '?' + query : ''}`)
    .then(res => res.json())
    .then(tracks => {if (cb) cb(tracks); })
 }
@@ -79,25 +79,25 @@ export function deleteTrackFromPlaylist(playlistID, body, cb) {
 }
 
 export function getTrack(id, cb) {
-   return get(`details/${id}`)
+   return get(`public/details/${id}`)
    .then(res => res.json())
    .then(track => { if (cb) cb(track); })
 }
 
 export function search(query, cb) {
-   return get(`search?${query}`)
+   return get(`public/search?${query}`)
    .then(res => res.json())
    .then(tracks => { if (cb) cb(tracks); })
 }
 
 export function getGenres(cb) {
-   return get('genres')
+   return get('public/genres')
    .then(res => res.json())
    .then(genres => { if (cb) cb(genres); })
 }
 
 export function getRecommendations(query, cb) {
-   return get(`recommend?${query}`)
+   return get(`public/recommend?${query}`)
    .then(res => res.json())
    .then(tracks => { if (cb) cb(tracks)})
 }
