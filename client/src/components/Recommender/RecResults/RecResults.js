@@ -26,7 +26,7 @@ export default function RecResults(props) {
    let addTrack = data => {
       if (curPlaylistID) {
          console.log('adding track to playlist')
-         addTrackToPlaylist(curPlaylistID, '?' + queryString.stringify({uris: data.uri}), data => {
+         addTrackToPlaylist(curPlaylistID, {uris: [data.uri]}, data => {
             console.log(JSON.stringify(data))
             setPlaylistUpdate(data)
          })

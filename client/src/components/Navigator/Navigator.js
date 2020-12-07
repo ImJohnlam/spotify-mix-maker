@@ -1,9 +1,8 @@
 import React, {useEffect, useState, Component} from 'react';
 import {Navbar, Button, Nav, Form, FormControl} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
-import queryString from 'query-string';
 import Cookies from 'js-cookie'
-import { baseURL, getMe } from '../../api'
+import { login, refreshToken, getMe } from '../../api'
 import './Navigator.css';
 import { useHistory } from 'react-router-dom';
 
@@ -13,46 +12,21 @@ export default function Navigator(props) {
 
    const history = useHistory();
 
-   console.log(`in Navigator, process.env=${JSON.stringify(process.env)}, baseURL=${baseURL}`)
 
-   // TODO: fix refresh
-
-   // priority show name, refresh, show login button
    useEffect(() => {
-      // never logged in, give user login button
-      if (!Cookies.get('expiry_date')) {
-         console.log('user never logged')
-      }
-      else {
-         console.log(`exp=${parseInt(Cookies.get('expiry_date'))} now=${Date.now()}`)
-         console.log(`time remaining=${(parseInt(Cookies.get('expiry_date')) - Date.now()) / 1000}`)
-         
-         //expired access token, must refresh
-         if (parseInt(Cookies.get('expiry_date')) < Date.now()) {
-            console.log('refreshing bc expired token')
-            window.location.assign(`${baseURL}refresh?${queryString.stringify({refresh_token: Cookies.get('refresh_token')})}`)
-         }
+      if (Cookies.get('expiry_date') && Cookies.get('access_token') && Cookies.get('refresh_token')) {
+         if (parseInt(Cookies.get('expiry_date')) < Date.now())
+            refreshToken()
          
          getMe(me => setUser(me.display_name))
       }
-      console.log(`access_token=${Cookies.get('access_token')}`)
-
    }, [])
-
-   // if can't log in, show login button
 
    let search = ev => {
       ev && ev.preventDefault();
       history.push(`/details?q=${searchInput}`);
       window.scrollTo(0, 0);
    }
-
-   let login = () => {
-      console.log(`logging in, assigning to ${baseURL}login`)
-      window.location.assign(`${baseURL}login`)
-   }
-
-   // NOTE: don't use query param in refresh/login
 
    return (
       <Navbar>
@@ -76,7 +50,6 @@ export default function Navigator(props) {
             <FormControl placeholder='search track' onChange={ev => setSearchInput(ev.target.value)}></FormControl>
             <Button onClick={search} id='search-button'>SEARCH</Button>
          </Form>
-         {/* <Button onClick={() => window.location.assign(`${baseURL}refresh?${queryString.stringify({refresh_token: Cookies.get('refresh_token')})}`)}>refresh token</Button> */}
          
          {user ? 
          <b>Hello, {user}</b>
