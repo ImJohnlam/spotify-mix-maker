@@ -8,8 +8,8 @@ import { SimpleTrack, SimplePlaylist }  from '../../components'
 
 
 export default function PlaylistTrack(props) {
-   const [seeds, setSeeds, calcNumSeeds, filters, setFilters, curPlaylistID,
-    setCurPlaylistID, playlistUpdate, setPlaylistUpdate] = useContext(RecommenderContext)
+   // const [seeds, setSeeds, calcNumSeeds, filters, setFilters, curPlaylistID,
+   //  setCurPlaylistID, playlistUpdate, setPlaylistUpdate] = useContext(RecommenderContext)
    const [user, setUser] = useState("");
    const [newPlaylistName, setNewPlaylistName] = useState("");
    const [items, setItems] = useState([])
@@ -18,11 +18,14 @@ export default function PlaylistTrack(props) {
    // NOTE: might not need useState?
    const [prevPageQuery, setPrevPageQuery] = useState(null)
    const [nextPageQuery, setNextPageQuery] = useState(null)
+
+   const [getRecState, setRecState] = useContext(RecommenderContext);
    
-   let handleCreatePlaylist = name => {
+   const handleCreatePlaylist = name => {
       createPlaylist({name: name}, playlist =>{
          playlist.onCardClick = reset;
-         setCurPlaylistID(playlist.id)
+         // setCurPlaylistID(playlist.id)
+         setRecState('CUR_PLAYLIST_ID', playlist.id);
          setCurPlaylist(<SimplePlaylist data={playlist}/>)
          setPrevPageQuery('')
          setNextPageQuery('')
@@ -30,7 +33,7 @@ export default function PlaylistTrack(props) {
       
    }
 
-   let handleGetPlaylists = query => {
+   const handleGetPlaylists = query => {
       getUserPlaylists(query, pagingObj => {
          setPrevPageQuery(pagingObj.previous && pagingObj.previous.split('?')[1])
          setNextPageQuery(pagingObj.next && pagingObj.next.split('?')[1])
@@ -43,7 +46,8 @@ export default function PlaylistTrack(props) {
       })
    }
 
-   let handleGetTracks = query => {
+   const handleGetTracks = query => {
+      const curPlaylistID = getRecState('CUR_PLAYLIST_ID');
       getPlaylistItems(curPlaylistID, query, tracks => {
          setItems(tracks.map((track, idx) => {
             track.onCardClick = deleteTrack;
@@ -53,6 +57,7 @@ export default function PlaylistTrack(props) {
    }
 
    useEffect(() => {
+      const curPlaylistID = getRecState('CUR_PLAYLIST_ID');
       if (!Cookies.get('expiry_date') || parseInt(Cookies.get('expiry_date')) < Date.now()) {
          console.log('not fetching playlists')
          return;
@@ -69,52 +74,57 @@ export default function PlaylistTrack(props) {
          console.log('fetch playlists')
          handleGetPlaylists('')
       }
-   }, [curPlaylistID, playlistUpdate])
+   }, [getRecState('CUR_PLAYLIST_ID'), getRecState('PLAYLIST_UPDATE')])
    // NOTE: playlistUpdate might be unnecessary?
 
-   let prevPage = () => {
+   const prevPage = () => {
       // if (curPlaylistID)
       //    handleGetTracks(prevPageQuery)
       // else
          handleGetPlaylists(prevPageQuery)
    }
 
-   let nextPage = () => {
+   const nextPage = () => {
       // if (curPlaylistID)
       //    handleGetTracks(nextPageQuery)
       // else
          handleGetPlaylists(nextPageQuery)
    }
 
-   let reset = () => {
-      setCurPlaylistID('')
+   const reset = () => {
+      // setCurPlaylistID('')
+      setRecState('CUR_PLAYLIST_ID', '')
       setCurPlaylist(null)
       setPrevPageQuery(null)
       setNextPageQuery(null)
    }
 
 
-   let selectPlaylist = data => {
+   const selectPlaylist = data => {
       console.log('selecting a playlist')
-      setCurPlaylistID(data.id)
+      // setCurPlaylistID(data.id)
+      setRecState('CUR_PLAYLIST_ID', data.id)
       data.onCardClick = reset;
       setCurPlaylist(<SimplePlaylist data={data}/>)
       setPrevPageQuery('')
       setNextPageQuery('')
    }
 
-   let deleteTrack = data => {
+   const deleteTrack = data => {
+      const curPlaylistID = getRecState('CUR_PLAYLIST_ID');
       let body = {tracks: [{uri: data.uri}]}
+
       console.log(`deleteTrack body=${JSON.stringify(body, null, 2)}`)
       deleteTrackFromPlaylist(curPlaylistID, body, delRes => {
          console.log(`delRes=${JSON.stringify(delRes, null, 2)}`)
-         setPlaylistUpdate(delRes)
+         // setPlaylistUpdate(delRes)
+         setRecState('PLAYLIST_UPDATE', delRes);
       })
    }
 
    return (
       <div>
-         <h1 onClick={() => console.log(`playlistID=${curPlaylistID}, items=${items}, curPlaylist=${JSON.stringify(curPlaylist)} prevPageQuery=${prevPageQuery}, nextPageQuery=${nextPageQuery}`)}>Playlist Editor</h1>
+         <h1 onClick={() => console.log(`playlistID=${getRecState('CUR_PLAYLIST_ID')}, items=${items}, curPlaylist=${JSON.stringify(curPlaylist)} prevPageQuery=${prevPageQuery}, nextPageQuery=${nextPageQuery}`)}>Playlist Editor</h1>
          <div>
             <Button disabled={!prevPageQuery} onClick={prevPage}>PREV PAGE</Button>
             <Button disabled={!nextPageQuery} onClick={nextPage}>NEXT PAGE</Button>
@@ -123,7 +133,7 @@ export default function PlaylistTrack(props) {
          <Card className='border border-secondary'>
             {user ? <b>{user}'s Playlists:</b> : ""}
             <div>Selected playlist: {curPlaylist || 'none'}</div>   
-            {curPlaylistID ?
+            {getRecState('CUR_PLAYLIST_ID') ?
             <div>
                Showing tracks for this playlist:
             </div>

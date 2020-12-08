@@ -29,9 +29,11 @@ const AttributeSetting = props => {
 
    const [localFilters, setLocalFilters] = useState({})
    const [borderState, setBorderState] = useState(false)
-   const [seeds, setSeeds, calcNumSeeds, filters, setFilters] = useContext(RecommenderContext)
+   // const [seeds, setSeeds, calcNumSeeds, filters, setFilters] = useContext(RecommenderContext)
+   const [getRecState, setRecState] = useContext(RecommenderContext);
 
-   let applyFilters = ev => {
+   const applyFilters = ev => {
+      const filters = getRecState('FILTERS');
       let newFilters;
 
       if (!Object.keys(localFilters).length)
@@ -44,22 +46,28 @@ const AttributeSetting = props => {
       }
 
       newFilters = {...filters, ...localFilters};
-      setFilters(newFilters);
-      setBorderState('success')
+      // setFilters(newFilters);
+      setRecState('FILTERS', newFilters);
+      setBorderState('success');
    }
 
-   let resetFilters = ev => {
-      let newFilters = {...filters}
+   const resetFilters = ev => {
+      const filters = getRecState('FILTERS');
+      const newFilters = {...filters}
+
       delete newFilters[`target_${props.attr}`]
       delete newFilters[`min_${props.attr}`]
       delete newFilters[`max_${props.attr}`]
+      if (props.attr == 'key')
+         delete newFilters['target_mode'];
       
       setLocalFilters({})
-      setFilters(newFilters)
+      // setFilters(newFilters)
+      setRecState('FILTERS', newFilters);
       setBorderState('')
    }
 
-   let handleChange = ev => {
+   const handleChange = ev => {
       let newFilters = {...localFilters}
       ev.preventDefault()
 
@@ -132,7 +140,7 @@ const AttributeSetting = props => {
 
    return (
       <Card border={borderState} style={{margin:'10px 10px 10px 10px'}}>
-         <Card.Body onClick={() => console.log(JSON.stringify(filters, null, 2))}>{friendlyName}</Card.Body>
+         <Card.Body onClick={() => console.log(JSON.stringify(getRecState('FILTERS'), null, 2))}>{friendlyName}</Card.Body>
          <Form>
             {controls}
          </Form>
@@ -144,14 +152,14 @@ const AttributeSetting = props => {
 export default function FilterBar(props) {
    const attrPerRow = 4;
    const [open, setOpen] = useState(false);
-   let attrGrid = [];
+   const attrGrid = [];
 
    for (let i = 0; i < attributes.length; i += attrPerRow) {
       attrGrid.push(
          <Row key={Math.floor(i, attrPerRow)}>
             {attributes.slice(i, i + attrPerRow).map((attribute, idx) => 
             <Col key={idx}>
-               <AttributeSetting attr={attribute} key={idx}/>
+               <AttributeSetting attr={attribute}/>
             </Col>)}
          </Row>
       );
