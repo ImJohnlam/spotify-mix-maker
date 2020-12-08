@@ -1,5 +1,5 @@
 import React, {useEffect, useState, Component, useContext} from 'react';
-import {Form, FormGroup, FormControl, Row, Col, Button, Card} from 'react-bootstrap';
+import {Button} from 'react-bootstrap';
 import { RecommenderContext } from '../../contexts'
 import queryString from 'query-string';
 import { getRecommendations, addTrackToPlaylist } from '../../../api'

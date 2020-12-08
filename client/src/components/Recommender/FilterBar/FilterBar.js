@@ -4,7 +4,7 @@ import { RecommenderContext } from '../../contexts'
 
 const attributes = ['acousticness', 'tempo', 'danceability', 'duration_ms',
  'energy', 'valence', 'instrumentalness', 'key',
- 'liveness','loudness', 'popularity', 'speechiness']
+ 'liveness','loudness', 'popularity', 'speechiness'];
 
 const attrFriendlyNames = {
    'acousticness': 'Acousticness',
@@ -20,7 +20,7 @@ const attrFriendlyNames = {
    'speechiness': 'Speechiness',
    'tempo': 'BPM',
    'valence': 'Happiness'
-}
+};
 
 
 const AttributeSetting = props => {
@@ -102,8 +102,8 @@ const AttributeSetting = props => {
             </Col>
          </Row>
          </section>
-      )
-   else {
+      );
+   else
       controls = (
          <section className='container'>
          <Row style={{margin:'10px 10px 10px 10px'}}>
@@ -128,8 +128,7 @@ const AttributeSetting = props => {
                </div>
          </Row>
          </section>
-      )
-   }
+      );
 
    return (
       <Card border={borderState} style={{margin:'10px 10px 10px 10px'}}>
@@ -137,9 +136,8 @@ const AttributeSetting = props => {
          <Form>
             {controls}
          </Form>
-         {/* <div onClick={() => console.log(JSON.stringify(seeds, null, 2))}>TEST</div> */}
       </Card>
-   )
+   );
 }
 
 //TODO: tooltips for loudness, duration, key(?)
@@ -156,7 +154,7 @@ export default function FilterBar(props) {
                <AttributeSetting attr={attribute} key={idx}/>
             </Col>)}
          </Row>
-      )
+      );
    }
 
    return (
@@ -166,5 +164,5 @@ export default function FilterBar(props) {
             <div>{attrGrid}</div>
          </Collapse>
       </div>
-   )
+   );
 }

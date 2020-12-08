@@ -38,6 +38,6 @@ router.post('/playlists/:playlistID/tracks', asyncHandler(async (req, res) => {
 router.delete('/playlists/:playlistID/tracks', asyncHandler(async (req, res) => {
    const delTrackRes = await req.spotifyRequest.deleteTrackFromPlaylist();
    res.json(delTrackRes);
-}))
+}));
 
 module.exports = router;

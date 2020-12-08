@@ -1,8 +1,7 @@
-import React, {useEffect, useState, Component, useContext} from 'react';
-import {Form, FormGroup, FormControl, Row, Col, Button, Card} from 'react-bootstrap';
-import queryString from 'query-string';
+import React from 'react';
+import {Row, Col} from 'react-bootstrap';
 import {FilterBar, Seeder, RecResults, PlaylistTracker} from '../components'
-import { RecommenderContext, RecommenderContextProvider } from '../contexts'
+import { RecommenderContextProvider } from '../contexts'
 
 export default function Recommender(props) {
 

@@ -7,12 +7,10 @@ import queryString from 'query-string';
 import { SimpleTrack }  from '../components'
 
 const TrackDetails = (props) => {
-   let [id, setId] = useContext(PlayerContext)
-   console.log(`data=${JSON.stringify(props.data, null, 2)}`);
-
+   const [id, setId] = useContext(PlayerContext)
    const data = props.data
 
-   let openInSpotify = () => window.open(data.external_urls.spotify)
+   const openInSpotify = () => window.open(data.external_urls.spotify)
 
    return (
       <Card style={{display:'block', margin:'10px 10px 10px 10px'}}>
@@ -46,7 +44,6 @@ const TrackDetails = (props) => {
             
             <div>
                <Button className='fa fa-play res-button' onClick={() => setId(data.id)}>      Play</Button>
-               {/* <Button className='fa fa-info res-button' onClick={goToDetails}>      Details</Button> */}
                <Button className='fa fa-spotify res-button' onClick={openInSpotify}>      Spotify</Button>
             </div>
          </Card.Body>
@@ -55,12 +52,19 @@ const TrackDetails = (props) => {
 }
 
 export default function Details(props) {
-   const [track , setTrack] = useState({})
-   const [searchInput, setSearchInput] = useState('')
-   const [searchRes, setSearchRes] = useState([])
+   const [track , setTrack] = useState({});
+   const [searchInput, setSearchInput] = useState('');
+   const [searchRes, setSearchRes] = useState([]);
 
    const path = 'details';
    let history = useHistory();
+
+   const submit = (ev) => {
+      const path = window.location.pathname || ""
+      ev.preventDefault()
+
+      history.push(`${path}?q=${searchInput}`)
+   }
 
    useEffect(() => {
       const urlSplit = window.location.pathname.split('/')
@@ -72,15 +76,7 @@ export default function Details(props) {
             setTrack(<TrackDetails data={detailedTrack}></TrackDetails>)
          })
       }
-   }, [window.location.pathname])
-
-   // useEffect(() => {
-   //    let query = queryString.parse(window.location.search)
-   //    if (query.q) {
-   //       console.log(`query.q=${query.q}`)
-   //       setSearchInput(query.q);
-   //    }
-   // }, [window.location.search])
+   }, [window.location.pathname]);
 
    useEffect(() => {
       let query;
@@ -95,17 +91,8 @@ export default function Details(props) {
             setSearchRes(tracks.map((track, idx) => <SimpleTrack data={track} key={idx}/>))
          });
       }
-   }, [window.location.search])
-
-   let handleChange = ev => setSearchInput(ev.target.value)
+   }, [window.location.search]);
    
-   let submit = (ev) => {
-      const path = window.location.pathname || ""
-      ev.preventDefault()
-
-      history.push(`${path}?q=${searchInput}`)
-   }
-
    return (
       <section className='container'>
          <h1> Track Details </h1>
@@ -118,11 +105,11 @@ export default function Details(props) {
          {/* <Button onClick={() => history.push(`/${path}/4Oun2ylbjFKMPTiaSbbCih`)}>TEST GO TO PATH</Button> */}
          <Form onSubmit={submit}>
             <FormGroup>
-               <FormControl placeholder="search track" onChange={handleChange}/>
+               <FormControl placeholder="search track" onChange={ev => setSearchInput(ev.target.value)}/>
             </FormGroup>
             <Button onClick={submit}>SEARCH</Button>
          </Form>
          {searchRes}
       </section>
-   )
+   );
 }
