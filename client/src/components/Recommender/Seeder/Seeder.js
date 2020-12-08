@@ -116,7 +116,7 @@ export default function Seeder(props) {
 
    return (
       <div>
-         <h1 onClick={() => console.log(`seedType=${seedType}, searchInput=${searchInput}`)}>Seeds</h1>
+         <h1>Seeds</h1>
          <Card>
             <Row>
                {mapSelectedSeeds()}

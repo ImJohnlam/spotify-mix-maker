@@ -36,5 +36,5 @@ app.use('/public', require('./routes/public.js'));
 app.use('/user', require('./routes/user.js'));
 
 app.listen(PORT, () => {
-   console.log(`listening on port ${PORT}`);
+   console.log(`Listening on port ${PORT}`);
 });

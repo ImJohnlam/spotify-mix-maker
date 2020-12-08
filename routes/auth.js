@@ -49,10 +49,10 @@ router.get('/callback', asyncHandler(async (req, res) => {
       res.clearCookie(stateKey);
 
       authObj = await SpotifyRequest.getToken(form);
-      res.cookie('access_token', cryptoJS.AES.encrypt(authObj.access_token, secretKey).toString())
-      res.cookie('refresh_token', cryptoJS.AES.encrypt(authObj.refresh_token, secretKey).toString())
-      res.cookie('expiry_date', parseInt(authObj.expires_in * 1000) + Date.now())
-      res.redirect(clientURL)
+      res.cookie('access_token', cryptoJS.AES.encrypt(authObj.access_token, secretKey).toString());
+      res.cookie('refresh_token', cryptoJS.AES.encrypt(authObj.refresh_token, secretKey).toString());
+      res.cookie('expiry_date', parseInt(authObj.expires_in * 1000) + Date.now());
+      res.redirect(clientURL);
    }
 }));
 
@@ -63,8 +63,8 @@ router.get('/refresh', asyncHandler(async (req, res) => {
    };
    const authObj = await SpotifyRequest.getToken(form);
 
-   res.cookie('access_token', cryptoJS.AES.encrypt(authObj.access_token, secretKey).toString())
-   res.cookie('expiry_date', parseInt(authObj.expires_in * 1000) + Date.now())
+   res.cookie('access_token', cryptoJS.AES.encrypt(authObj.access_token, secretKey).toString());
+   res.cookie('expiry_date', parseInt(authObj.expires_in * 1000) + Date.now());
    res.redirect(clientURL);
 }));
 

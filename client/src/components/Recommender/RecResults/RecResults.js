@@ -29,9 +29,9 @@ export default function RecResults(props) {
    }
 
    const mapReccomendations = () => {
-      return recs.map(rec => {
+      return recs.map((rec, idx) => {
          rec.onCardClick = addTrack;
-         return <SimpleTrack data={rec}/>;
+         return <SimpleTrack data={rec} key={idx}/>;
       });
    }
 

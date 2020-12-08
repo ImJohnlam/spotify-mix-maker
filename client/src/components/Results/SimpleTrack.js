@@ -22,7 +22,7 @@ export default props => {
             src={data.imgSrc}
             width='200' height='200'
             style={{cursor: 'pointer'}}
-            onClick={data.onCardClick ? () => {console.log(`calling cardclick data=${JSON.stringify(data)}`); data.onCardClick(data);} : goToDetails}
+            onClick={data.onCardClick ? () => { data.onCardClick(data); } : goToDetails}
             />
          <span style={{'fontSize':'large'}}>
             <b>{data.name}</b>{` by: ${data.artists.map(artist => artist.name).join(', ')}`}

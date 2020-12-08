@@ -29,9 +29,9 @@ class SpotifyRequest {
 
    _addImgSrc(item, type) {
       if (type === 'track')
-         item.imgSrc = item.album.images[0].url
+         item.imgSrc = item.album.images[0].url;
       else if (type === 'artist' || type === 'playlist')
-         item.imgSrc = item.images.length && item.images[0].url
+         item.imgSrc = item.images.length && item.images[0].url;
    }
 
    _addDetails(track) {
@@ -39,14 +39,14 @@ class SpotifyRequest {
       const camelotNum = ((7 * track.key) + 5 + (track.mode ? 3 : 0)) % 12 || 12;
       const minutes = Math.round(track.duration_ms / 60000);
       const seconds = Math.round(track.duration_ms / 1000) % 60;
-      const ratings = ['acousticness', 'danceability', 'energy', 'instrumentalness', 'liveness', 'speechiness', 'valence']
+      const ratings = ['acousticness', 'danceability', 'energy', 'instrumentalness', 'liveness', 'speechiness', 'valence'];
    
       track.classical = keys[track.key] + (track.mode ? ' Major' : ' Minor');
-      track.camelot = camelotNum.toString(10) + (track.mode ? 'B' : 'A')
+      track.camelot = camelotNum.toString(10) + (track.mode ? 'B' : 'A');
       track.duration_min = minutes.toString(10) + ':' + (seconds < 10 ? '0' : '') + seconds.toString(10);
-      track.bpm = Number.parseFloat(track.tempo).toFixed(2); // NOTE: consider rounding to 2 decimal places
-      track.loudness = Math.round(track.loudness).toString(10) + ' dB'
-      ratings.forEach(attr => track[attr] = Math.round(parseFloat(track[attr]) * 100))
+      track.bpm = Number.parseFloat(track.tempo).toFixed(2);
+      track.loudness = Math.round(track.loudness).toString(10) + ' dB';
+      ratings.forEach(attr => track[attr] = Math.round(parseFloat(track[attr]) * 100));
    }
 
    _get(path) {
@@ -116,8 +116,6 @@ class SpotifyRequest {
       });
       const path = `playlists/${id}/tracks?${query}`;
       const playlistItems = await this._get(path);
-
-      console.log(`path=${path}`)
       const tracks = playlistItems.items.map(pt => {
          let track = pt.track;
          this._addImgSrc(track, 'track');
@@ -168,7 +166,7 @@ class SpotifyRequest {
    }
 
    async addTrackToPlaylist() {
-      const path = `playlists/${this.req.params.playlistID}/tracks`
+      const path = `playlists/${this.req.params.playlistID}/tracks`;
       const addTrackRes = await this._post(path, this.req.body);
       return addTrackRes;
    }
