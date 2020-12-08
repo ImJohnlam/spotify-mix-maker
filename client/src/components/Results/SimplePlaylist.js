@@ -1,18 +1,10 @@
-import React, {useEffect, useContext } from 'react';
-import { Button, Card, ListGroup } from 'react-bootstrap';
-import { useHistory } from 'react-router-dom';
-import {PlayerContext} from '../contexts'
+import React from 'react';
+import { Button, Card } from 'react-bootstrap';
 
 export default props => {
-   let [id, setId] = useContext(PlayerContext)
-   let history = useHistory();
-   let data = props.data;
+   const data = props.data;
+   const openInSpotify = () => window.open(data.external_urls.spotify)
 
-   let openInSpotify = () => window.open(data.external_urls.spotify)
-
-   // TODO: change buttons to <a> or img
-   // TODO: rm onCardClick
-   // NOTE: consider Nav/tabs for more track details
    return (
       <div>
          <Card style={{display:'block', margin:'10px 10px 10px 10px'}}>
@@ -30,5 +22,5 @@ export default props => {
             </div>
          </Card>
       </div>
-   )
+   );
 }

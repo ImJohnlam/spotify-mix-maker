@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import {Navbar, Button, Nav, Form, FormControl} from 'react-bootstrap';
-import {LinkContainer} from 'react-router-bootstrap';
-import Cookies from 'js-cookie'
-import { login, refreshToken, getMe } from '../../api'
+import React, { useEffect, useState } from 'react';
+import { Navbar, Button, Nav, Form, FormControl } from 'react-bootstrap';
+import { LinkContainer} from 'react-router-bootstrap';
+import Cookies from 'js-cookie';
+import { login, refreshToken, getMe } from '../../api';
 import './Navigator.css';
 import { useHistory } from 'react-router-dom';
 
@@ -16,7 +16,7 @@ export default function Navigator(props) {
       ev && ev.preventDefault();
       history.push(`/details?q=${searchInput}`);
       window.scrollTo(0, 0);
-   };
+   }
 
    useEffect(() => {
       if (Cookies.get('expiry_date') && Cookies.get('access_token') && Cookies.get('refresh_token')) {
@@ -48,10 +48,9 @@ export default function Navigator(props) {
              onChange={ev => setSearchInput(ev.target.value)}/>
             <Button onClick={search} id='search-button'>SEARCH</Button>
          </Form>
-         {user ? 
-         <b>Hello, {user}</b>
-         :
-         <Button onClick={login}>LOGIN</Button>
+         {user
+          ? <b>Hello, {user}</b>
+          : <Button onClick={login}>LOGIN</Button>
          }
       </Navbar>
    );

@@ -1,16 +1,16 @@
-import React, {useEffect, useState, useContext} from 'react';
-import {Form, FormGroup, FormControl, Button, Card, Row, Col } from 'react-bootstrap';
+import React, { useEffect, useState, useContext } from 'react';
+import { Form, FormGroup, FormControl, Button, Card, Row, Col } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { getTrack, search } from '../../api'
-import { PlayerContext } from '../contexts'
+import { PlayerContext } from '../contexts';
 import queryString from 'query-string';
-import { SimpleTrack }  from '../components'
+import { SimpleTrack }  from '../components';
 
 const TrackDetails = (props) => {
    const [id, setId] = useContext(PlayerContext)
-   const data = props.data
+   const data = props.data;
 
-   const openInSpotify = () => window.open(data.external_urls.spotify)
+   const openInSpotify = () => window.open(data.external_urls.spotify);
 
    return (
       <Card style={{display:'block', margin:'10px 10px 10px 10px'}}>
@@ -41,14 +41,13 @@ const TrackDetails = (props) => {
                   </ul>
                </Col>
             </Row>
-            
             <div>
-               <Button className='fa fa-play res-button' onClick={() => setId(data.id)}>      Play</Button>
-               <Button className='fa fa-spotify res-button' onClick={openInSpotify}>      Spotify</Button>
+               <Button className='fa fa-play res-button' onClick={() => setId(data.id)}>Play</Button>
+               <Button className='fa fa-spotify res-button' onClick={openInSpotify}>Spotify</Button>
             </div>
          </Card.Body>
       </Card>
-   )
+   );
 }
 
 export default function Details(props) {
@@ -57,24 +56,22 @@ export default function Details(props) {
    const [searchRes, setSearchRes] = useState([]);
 
    const path = 'details';
-   let history = useHistory();
+   const history = useHistory();
 
    const submit = (ev) => {
-      const path = window.location.pathname || ""
-      ev.preventDefault()
-
-      history.push(`${path}?q=${searchInput}`)
+      const path = window.location.pathname || "";
+      ev.preventDefault();
+      history.push(`${path}?q=${searchInput}`);
    }
 
    useEffect(() => {
-      const urlSplit = window.location.pathname.split('/')
+      const urlSplit = window.location.pathname.split('/');
       const id = urlSplit[urlSplit.length - 1];
 
-      console.log(`details pathname: ${window.location.pathname} id='${id}'`)
       if (id !== path) {
          getTrack(id, detailedTrack => {
-            setTrack(<TrackDetails data={detailedTrack}></TrackDetails>)
-         })
+            setTrack(<TrackDetails data={detailedTrack}></TrackDetails>);
+         });
       }
    }, [window.location.pathname]);
 
@@ -85,10 +82,9 @@ export default function Details(props) {
             q: (queryString.parse(window.location.search)).q,
             type: 'track'
          });
-         console.log(`searching for results, q=${query.q}`)
-         console.log(queryString.parse(window.location.search))
+         
          search(query, tracks => {
-            setSearchRes(tracks.map((track, idx) => <SimpleTrack data={track} key={idx}/>))
+            setSearchRes(tracks.map((track, idx) => <SimpleTrack data={track} key={idx}/>));
          });
       }
    }, [window.location.search]);
@@ -102,7 +98,6 @@ export default function Details(props) {
             <li>Click on image of the search result to view details</li>
          </ol>
          {Object.keys(track).length && track !== {} ? track : ""}
-         {/* <Button onClick={() => history.push(`/${path}/4Oun2ylbjFKMPTiaSbbCih`)}>TEST GO TO PATH</Button> */}
          <Form onSubmit={submit}>
             <FormGroup>
                <FormControl placeholder="search track" onChange={ev => setSearchInput(ev.target.value)}/>

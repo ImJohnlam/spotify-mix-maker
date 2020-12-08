@@ -1,11 +1,11 @@
-import React, {useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormControl } from 'react-bootstrap';
 import { getPlaylistItems } from '../../api';
 import { SimpleTrack }  from '../components';
 
 export default function Home(props) {
-   const [curPlaylistID, setCurPlaylistID] = useState('ustop50')
-   const [tracks, setTracks] = useState([])
+   const [curPlaylistID, setCurPlaylistID] = useState('ustop50');
+   const [tracks, setTracks] = useState([]);
 
    const topChartsMap = {
       'ustop50': '37i9dQZEVXbLRQDuF5jeBp',
@@ -15,8 +15,7 @@ export default function Home(props) {
 
    useEffect(() => { 
       getPlaylistItems(topChartsMap[curPlaylistID], '', topTracks => {
-         // console.log(topTracks)
-         setTracks(topTracks.map((track, idx) => <SimpleTrack data={track} key={idx}/>))
+         setTracks(topTracks.map((track, idx) => <SimpleTrack data={track} key={idx}/>));
       })
    }, [curPlaylistID]);
 
@@ -36,12 +35,11 @@ export default function Home(props) {
             <option value='globaltop50'>GLOBAL TOP 50</option>
             <option value='globalviral50'>GLOBAL VIRAL 50</option>
          </FormControl>
-         {tracks.length ? 
-         <div className='border border-primary' style={{margin:'10px'}}>
-            {tracks}
-         </div>
-         :
-         ""
+         {tracks.length
+          ? <div className='border border-primary' style={{margin:'10px'}}>
+               {tracks}
+            </div>
+          : ""
          }     
       </section>
    );

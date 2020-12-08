@@ -1,20 +1,18 @@
-import React, {useEffect, useContext } from 'react';
-import { Button, Card, ListGroup } from 'react-bootstrap';
+import React from 'react';
+import { Card } from 'react-bootstrap';
 
 export default props => {
-   let data = props.data;
-
-   let temp = () => {}
+   const data = props.data;
 
    return (
       <div>
          <Card style={{cursor: 'pointer'}} onClick={
-          data.onCardClick ? () => data.onCardClick(data) : temp}>
+          data.onCardClick ? () => data.onCardClick(data) : () => {}}>
             <img src={data.imgSrc} width='200' height='200'/>
             <Card.Body>
                {data.name}
             </Card.Body>
          </Card>
       </div>
-   )
+   );
 }

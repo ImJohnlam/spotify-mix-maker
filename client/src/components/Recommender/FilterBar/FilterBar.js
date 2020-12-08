@@ -1,6 +1,6 @@
-import React, {useEffect, useState, Component, useContext} from 'react';
-import {Form, FormGroup, FormControl, Row, Col, Button, Card, Collapse, Container} from 'react-bootstrap';
-import { RecommenderContext } from '../../contexts'
+import React, { useState, useContext } from 'react';
+import { Form, Row, Col, Button, Card, Collapse } from 'react-bootstrap';
+import { RecommenderContext } from '../../contexts';
 
 const attributes = ['acousticness', 'tempo', 'danceability', 'duration_ms',
  'energy', 'valence', 'instrumentalness', 'key',
@@ -23,13 +23,12 @@ const attrFriendlyNames = {
 };
 
 
-const AttributeSetting = props => {
+const AttributeSetting = props => {;
    const friendlyName = attrFriendlyNames[props.attr]
    let controls;
 
-   const [localFilters, setLocalFilters] = useState({})
-   const [borderState, setBorderState] = useState(false)
-   // const [seeds, setSeeds, calcNumSeeds, filters, setFilters] = useContext(RecommenderContext)
+   const [localFilters, setLocalFilters] = useState({});
+   const [borderState, setBorderState] = useState(false);
    const [getRecState, setRecState] = useContext(RecommenderContext);
 
    const applyFilters = ev => {
@@ -42,38 +41,36 @@ const AttributeSetting = props => {
       if (props.attr === 'duration_ms') {
          Object.keys(localFilters).forEach(filterName =>
             localFilters[filterName] = localFilters[filterName].split(':').reduce((acc,time) => (60 * acc) + +time) * 1000
-         )
+         );
       }
 
       newFilters = {...filters, ...localFilters};
-      // setFilters(newFilters);
       setRecState('FILTERS', newFilters);
       setBorderState('success');
    }
 
    const resetFilters = ev => {
       const filters = getRecState('FILTERS');
-      const newFilters = {...filters}
+      const newFilters = {...filters};
 
-      delete newFilters[`target_${props.attr}`]
-      delete newFilters[`min_${props.attr}`]
-      delete newFilters[`max_${props.attr}`]
+      delete newFilters[`target_${props.attr}`];
+      delete newFilters[`min_${props.attr}`];
+      delete newFilters[`max_${props.attr}`];
       if (props.attr == 'key')
          delete newFilters['target_mode'];
       
-      setLocalFilters({})
-      // setFilters(newFilters)
+      setLocalFilters({});
       setRecState('FILTERS', newFilters);
       setBorderState('')
    }
 
    const handleChange = ev => {
-      let newFilters = {...localFilters}
-      ev.preventDefault()
+      let newFilters = {...localFilters};
+      ev.preventDefault();
 
       newFilters[ev.target.name] = ev.target.value;
-      setLocalFilters(newFilters)
-      setBorderState('warning')
+      setLocalFilters(newFilters);
+      setBorderState('warning');
    }
 
    if (props.attr === 'key')
@@ -119,17 +116,14 @@ const AttributeSetting = props => {
                <Form.Control name={`target_${props.attr}`} placeholder='target' 
                onChange={handleChange} value={localFilters[`target_${props.attr}`] || ''}/>
                </Row>
-            
                <Row>
                <Form.Control name={`min_${props.attr}`} placeholder='min' 
                onChange={handleChange} value={localFilters[`min_${props.attr}`] || ''}/>
                </Row>
-         
                <Row>
                <Form.Control name={`max_${props.attr}`} placeholder='max' 
                onChange={handleChange} value={localFilters[`max_${props.attr}`] || ''}/>
                </Row>
-
             <div>
                <Button onClick={applyFilters}>apply</Button>
                <Button onClick={resetFilters}>reset</Button>
@@ -140,7 +134,7 @@ const AttributeSetting = props => {
 
    return (
       <Card border={borderState} style={{margin:'10px 10px 10px 10px'}}>
-         <Card.Body onClick={() => console.log(JSON.stringify(getRecState('FILTERS'), null, 2))}>{friendlyName}</Card.Body>
+         <Card.Body>{friendlyName}</Card.Body>
          <Form>
             {controls}
          </Form>
@@ -148,7 +142,6 @@ const AttributeSetting = props => {
    );
 }
 
-//TODO: tooltips for loudness, duration, key(?)
 export default function FilterBar(props) {
    const attrPerRow = 4;
    const [open, setOpen] = useState(false);

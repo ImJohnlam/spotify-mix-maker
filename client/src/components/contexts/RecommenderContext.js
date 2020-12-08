@@ -2,10 +2,10 @@ import React, { useState, createContext } from 'react'
 
 const RecommenderContext = createContext();
 const RecommenderContextProvider = props => {
-   const [seeds, setSeeds] = useState({})
-   const [filters, setFilters] = useState({})
-   const [curPlaylistID, setCurPlaylistID] = useState('')
-   const [playlistUpdate, setPlaylistUpdate] = useState('')
+   const [seeds, setSeeds] = useState({});
+   const [filters, setFilters] = useState({});
+   const [curPlaylistID, setCurPlaylistID] = useState('');
+   const [playlistUpdate, setPlaylistUpdate] = useState('');
 
    const getRecState = type => {
       switch (type) {
@@ -47,7 +47,7 @@ const RecommenderContextProvider = props => {
       <RecommenderContext.Provider value={[getRecState, setRecState]}>
          {props.children}
       </RecommenderContext.Provider>
-   )
+   );
 }
 
-export { RecommenderContext, RecommenderContextProvider }
+export { RecommenderContext, RecommenderContextProvider };

@@ -1,8 +1,8 @@
 import React from 'react';
-import {Route, Redirect, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import './App.css';
-import { Home, Recommender, Details, Player, Navigator }  from '../components'
-import { PlayerContextProvider } from '../contexts'
+import { Home, Recommender, Details, Player, Navigator }  from '../components';
+import { PlayerContextProvider } from '../contexts';
 
 export default function App(props) {
    return (

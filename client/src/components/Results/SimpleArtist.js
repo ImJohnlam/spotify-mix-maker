@@ -1,10 +1,9 @@
-import React, {useEffect, useContext } from 'react';
-import { Button, Card, ListGroup } from 'react-bootstrap';
+import React from 'react';
+import { Button, Card } from 'react-bootstrap';
 
 export default props => {
-   let data = props.data;
-
-   let openInSpotify = () => window.open(data.external_urls.spotify)
+   const data = props.data;
+   const openInSpotify = () => window.open(data.external_urls.spotify);
    
    return (
       <div>
@@ -19,11 +18,9 @@ export default props => {
                <b>{data.name}</b> {data.genres.length ? `genres: ${data.genres.join(', ')}` : ''}
             </span>
             <div>
-               <Button className='fa fa-spotify res-button' onClick={openInSpotify}>      Spotify</Button>
+               <Button className='fa fa-spotify res-button' onClick={openInSpotify}>Spotify</Button>
             </div>
-         </Card>
-         
-         
+         </Card>    
       </div>
-   )
+   );
 }

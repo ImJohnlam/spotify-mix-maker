@@ -1,10 +1,9 @@
 import React from 'react';
-import {Row, Col} from 'react-bootstrap';
-import {FilterBar, Seeder, RecResults, PlaylistTracker} from '../components'
-import { RecommenderContextProvider } from '../contexts'
+import { Row, Col } from 'react-bootstrap';
+import { FilterBar, Seeder, RecResults, PlaylistTracker } from '../components';
+import { RecommenderContextProvider } from '../contexts';
 
 export default function Recommender(props) {
-
    return (
       <section className='container'>
          <h1>Track Recommendation System and Playlist Editor</h1>
@@ -28,7 +27,6 @@ export default function Recommender(props) {
                <li>Delete tracks from the selected playlist by clicking on the track images in the playlist editor column</li>
             </ol>
          </div>
-         
          <RecommenderContextProvider>
             <FilterBar/>
             <Row>
@@ -43,7 +41,6 @@ export default function Recommender(props) {
                </Col>
             </Row>
          </RecommenderContextProvider>
-         
       </section>
-   )
+   );
 }
