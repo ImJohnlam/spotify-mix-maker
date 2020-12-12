@@ -48,34 +48,34 @@ export function refreshToken() {
    window.location.assign(`${baseURL}auth/refresh?${queryString.stringify({refresh_token: Cookies.get('refresh_token')})}`);
 }
 
-// PUBLIC RESOURCES
+// CLIENT RESOURCES
 
 export function getTrack(id, cb) {
-   return get(`public/details/${id}`)
+   return get(`client/details/${id}`)
    .then(res => res.json())
    .then(track => { if (cb) cb(track); });
 }
 
 export function search(query, cb) {
-   return get(`public/search?${query}`)
+   return get(`client/search?${query}`)
    .then(res => res.json())
    .then(tracks => { if (cb) cb(tracks); });
 }
 
 export function getGenres(cb) {
-   return get('public/genres')
+   return get('client/genres')
    .then(res => res.json())
    .then(genres => { if (cb) cb(genres); });
 }
 
 export function getRecommendations(query, cb) {
-   return get(`public/recommendations?${query}`)
+   return get(`client/recommendations?${query}`)
    .then(res => res.json())
    .then(tracks => { if (cb) cb(tracks)});
 }
 
 export function getPlaylistItems(id, query, cb) {
-   return get(`public/playlists/${id}/tracks${query ? `?${query}` : ''}`)
+   return get(`client/playlists/${id}/tracks${query ? `?${query}` : ''}`)
    .then(res => res.json())
    .then(tracks => {if (cb) cb(tracks); });
 }

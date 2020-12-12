@@ -80,7 +80,7 @@ class SpotifyRequest {
       return fetch(url, options).then(data => data.json());
    }
 
-   // PUBLIC RESOURCES
+   // CLIENT RESOURCES
 
    async search() {
       const path = `search?${querystring.stringify(this.req.query)}`;

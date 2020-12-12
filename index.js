@@ -32,7 +32,7 @@ app.options("/*", function(req, res) {
 });
 
 app.use('/auth', require('./routes/auth.js'));
-app.use('/public', require('./routes/public.js'));
+app.use('/client', require('./routes/client.js'));
 app.use('/user', require('./routes/user.js'));
 
 app.listen(PORT, () => {
