@@ -37,7 +37,7 @@ app.use('/client', require('./routes/client.js'));
 app.use('/user', require('./routes/user.js'));
 
 app.get('/*', function (req, res) {
-   res.sendFile(path.join(__dirname, 'build', 'index.html'));
+   res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
  });
 
 app.listen(PORT, () => {
