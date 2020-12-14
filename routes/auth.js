@@ -62,7 +62,6 @@ router.get('/refresh', asyncHandler(async (req, res) => {
       refresh_token: cryptoJS.AES.decrypt(req.cookies.refresh_token, secretKey).toString(cryptoJS.enc.Utf8)
    };
    const authObj = await SpotifyRequest.getToken(form);
-
    res.cookie('access_token', cryptoJS.AES.encrypt(authObj.access_token, secretKey).toString());
    res.cookie('expiry_date', parseInt(authObj.expires_in * 1000) + Date.now());
    res.redirect(clientURL);

@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 const dotenv = require('dotenv').config();
 
 const app = express();
@@ -13,9 +14,9 @@ app.use(bodyParser());
 app.use(cookieParser());
 
 if (process.env.NODE_ENV === 'production')
-   app.use(express.static('client/build'));
+   app.use(express.static(path.join(__dirname, 'client/build')));
 else
-   app.use(express.static(__dirname + '/public'));
+   app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function(req, res, next) {
    console.log("Handling " + req.path + '/' + req.method);

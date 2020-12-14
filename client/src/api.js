@@ -3,6 +3,8 @@ import Cookies from 'js-cookie';
 
 const baseURL = process.env.NODE_ENV === 'production' ?
  process.env.REACT_APP_API_URL : "http://localhost:3000/";
+const cookieKeys = ['expiry_date', 'access_token', 'refresh_token'];
+
 const headers = new Headers();
 const reqConf = {
    headers: headers,
@@ -38,14 +40,21 @@ function del(endpoint, body) {
    });
 }
 
+function removeCookies() {
+   cookieKeys.forEach(key => Cookies.remove(key));
+}
+
 // AUTH RESOURCES
 
 export function login() {
+   removeCookies();
    window.location.assign(`${baseURL}auth/login`);
 }
 
 export function refreshToken() {
-   window.location.assign(`${baseURL}auth/refresh?${queryString.stringify({refresh_token: Cookies.get('refresh_token')})}`);
+   const token = Cookies.get('refresh_token');
+   removeCookies();
+   window.location.assign(`${baseURL}auth/refresh?${queryString.stringify({refresh_token: token})}`);
 }
 
 // CLIENT RESOURCES
