@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const path = require('path');
-const dotenv = require('dotenv').config();
 
 const app = express();
 
@@ -10,6 +9,7 @@ const PORT = process.env.PORT || 3000
 
 const clientURL = process.env.CLIENT_URL || 'http://localhost:3001';
 
+require('dotenv').config();
 app.use(bodyParser());
 app.use(cookieParser());
 
@@ -36,11 +36,8 @@ app.use('/auth', require('./routes/auth.js'));
 app.use('/client', require('./routes/client.js'));
 app.use('/user', require('./routes/user.js'));
 
-app.get('/*', (req, res) => {
-   let url = path.join(__dirname, '../client/build', 'index.html');
-   if (!url.startsWith('/app/')) // we're on local windows
-     url = url.substring(1);
-   res.sendFile(url);
+app.get('/', function (req, res) {
+   res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
  });
 
 app.listen(PORT, () => {
