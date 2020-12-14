@@ -36,6 +36,13 @@ app.use('/auth', require('./routes/auth.js'));
 app.use('/client', require('./routes/client.js'));
 app.use('/user', require('./routes/user.js'));
 
+app.get('/*', (req, res) => {
+   const url = path.join(__dirname, '../client/build', 'index.html');
+   if (!url.startsWith('/app/')) // we're on local windows
+     url = url.substring(1);
+   res.sendFile(url);
+ });
+
 app.listen(PORT, () => {
    console.log(`Listening on port ${PORT}`);
 });
