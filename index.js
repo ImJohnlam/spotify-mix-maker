@@ -32,9 +32,9 @@ app.options("/*", function(req, res) {
    res.status(200).end();
 });
 
-app.use('/auth', require('./routes/auth.js'));
-app.use('/client', require('./routes/client.js'));
-app.use('/user', require('./routes/user.js'));
+app.use('/api/auth', require('./routes/auth.js'));
+app.use('/api/client', require('./routes/client.js'));
+app.use('/api/user', require('./routes/user.js'));
 
 app.get('/*', function (req, res) {
    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));

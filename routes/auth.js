@@ -9,11 +9,11 @@ const clientID = process.env.CLIENT_ID;
 const secretKey = process.env.SECRET_KEY;
 
 const clientURL = process.env.CLIENT_URL || 'http://localhost:3001';
-const redirectURI = process.env.REDIRECT_URL || 'http://localhost:3000/auth/callback';
+const redirectURI = process.env.REDIRECT_URL || 'http://localhost:3000/api/auth/callback';
 const stateKey = 'spotify_auth_state';
 
 const router = express.Router({caseSensitive: true});
-router.baseURL = '/auth';
+router.baseURL = '/api/auth';
 
 
 router.get('/login', (req, res) => {

@@ -7,7 +7,7 @@ const SpotifyRequest = require('./SpotifyRequest');
 const secretKey = process.env.SECRET_KEY;
 
 const router = express.Router({caseSensitive: true});
-router.baseURL = '/user';
+router.baseURL = '/api/user';
 
 router.use(asyncHandler(async (req, res, next) => {
    const accessToken = cryptoJS.AES.decrypt(req.cookies.access_token, secretKey).toString(cryptoJS.enc.Utf8);

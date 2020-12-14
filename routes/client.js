@@ -4,7 +4,7 @@ const {asyncHandler} = require('./utils');
 const SpotifyRequest = require('./SpotifyRequest');
 
 const router = express.Router({caseSensitive: true});
-router.baseURL = '/client';
+router.baseURL = '/api/client';
 
 // get client credentials
 router.use(asyncHandler(async (req, res, next) => {

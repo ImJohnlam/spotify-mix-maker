@@ -2,7 +2,7 @@ import queryString from 'query-string';
 import Cookies from 'js-cookie';
 
 const baseURL = process.env.NODE_ENV === 'production' ?
- process.env.REACT_APP_API_URL : "http://localhost:3000/";
+ process.env.REACT_APP_API_URL : "http://localhost:3000/api/";
 const cookieKeys = ['expiry_date', 'access_token', 'refresh_token'];
 
 const headers = new Headers();
